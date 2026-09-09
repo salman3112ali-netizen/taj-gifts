@@ -5,11 +5,20 @@ import { getProduct, getProducts, getSettings, inr } from "@/lib/store";
 import ProductView from "./product-view";
 import ProductCard from "@/components/product-card";
 import { Reveal } from "@/components/reveal";
+import { JsonLd, productJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const p = await getProduct(slug);
-  return p ? { title: p.name, description: p.tagline || p.description || undefined } : { title: "Hamper not found" };
+  const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://tajgifts.netlify.app";
+  return p
+    ? {
+        title: `${p.name} — ${p.occasion} Gift Hamper (${inr(p.price)}) | Taj Gifts Kashipur`,
+        description: (p.tagline || p.description || `${p.occasion} gift hamper hand-tied in Kashipur.`).slice(0, 155),
+        alternates: { canonical: `${BASE}/product/${p.slug}` },
+        openGraph: { title: `${p.name} · ${p.occasion} hamper`, description: p.tagline || undefined, images: [{ url: BASE + p.image, width: 896, height: 1120, alt: p.name }] },
+      }
+    : { title: "Hamper not found" };
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -20,6 +29,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
+      <JsonLd data={productJsonLd(p, settings)} />
+      <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Shop hampers", path: "/shop" }, { name: p.occasion, path: `/shop?occasion=${encodeURIComponent(p.occasion)}` }, { name: p.name, path: `/product/${p.slug}` }])} />
       <ProductView p={p} settings={settings} />
       {related.length > 0 && (
         <section className="wrap pb-24 pt-8">

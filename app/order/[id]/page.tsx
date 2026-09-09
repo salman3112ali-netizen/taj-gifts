@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { admin } from "@/lib/supabase";
 import { getSettings, inr, orderCode, dateTimeFmt, waLink } from "@/lib/store";
+import { hamperArtUrl } from "@/lib/hamper-art";
+import { workOrderLink } from "@/lib/workorder";
+import HamperArt from "@/components/hamper-art";
 import type { Order, OrderItem } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Your order" };
@@ -22,6 +25,17 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   const o = order as Order;
   const its = (items ?? []) as OrderItem[];
   const stepIdx = o.status === "cancelled" ? -1 : STATUS_STEPS.indexOf(o.status);
+
+  // artist's preview: deterministic AI render of exactly this hamper
+  const slugs = [...new Set(its.map((i) => i.slug))];
+  const { data: prods } = await admin().from("products").select("slug,contents,occasion").in("slug", slugs);
+  const artUrl = hamperArtUrl({
+    names: its.map((i) => i.name),
+    contents: (prods ?? []).flatMap((p: { contents: string[] | null }) => p.contents ?? []),
+    occasion: its[0]?.occasion ?? undefined,
+    seed: o.id,
+  });
+  const waWork = workOrderLink(o, its, settings, artUrl);
 
   return (
     <section className="wrap max-w-[860px] pb-24 pt-12">
@@ -99,6 +113,22 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             <p className="mt-1 text-ink/70">Then WhatsApp us the screenshot with your order code {orderCode(o.id)}.</p>
           </div>
         )}
+
+        <div className="mt-9 grid items-center gap-8 rounded-[28px] bg-cream-deep/60 p-6 md:grid-cols-[240px_1fr]">
+          <HamperArt src={artUrl} fallback={its[0]?.image || "/img/hero.jpg"} alt={`Artist's preview of your ${its.map((i) => i.name).join(" + ")} hamper`} />
+          <div>
+            <p className="eyebrow">While you wait</p>
+            <h2 className="font-display mt-2 text-2xl font-semibold leading-snug">Here's our artist's sketch of the hamper we'll tie for you.</h2>
+            <p className="mt-3 text-[14px] leading-relaxed text-ink-soft">
+              Auto-painted from your exact contents list — the real one is tied by hand in {settings.city}, so expect it even lovelier (and smelling of mithai). Want a change? Reply on WhatsApp before we seal the box.
+            </p>
+            <a className="btn-rose mt-5" href={waWork} target="_blank" rel="noreferrer">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.8-4.4-4-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.2Z" /></svg>
+              Send hamper work-order to studio
+            </a>
+            <p className="mt-2 text-[12px] text-ink-soft">One tap forwards the full tying brief (items, note, address, totals) to our WhatsApp.</p>
+          </div>
+        </div>
 
         <div className="mt-9 flex flex-wrap gap-4">
           <a className="btn-primary" href={waLink(settings.whatsapp, `Hi! My order ${orderCode(o.id)} — just checking in 🙂`)} target="_blank" rel="noreferrer">Track on WhatsApp</a>

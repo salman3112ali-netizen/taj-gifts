@@ -1,0 +1,8 @@
+export const FAQS: { q: string; a: string }[] = [
+  { q: "Where do you deliver, and how fast?", a: "Same-day hand-delivery inside Kashipur and nearby pincodes (244713, 244715, 244001, 263139, 263153). Everywhere else in India ships double-boxed via trusted couriers, dispatched before 2 pm the same day for orders placed in the morning. Festive peaks may add a day or two — we'll always tell you upfront." },
+  { q: "Can I customise a hamper completely?", a: "Yes — that's our favourite kind of order. WhatsApp us your occasion, budget and any must-haves (a favourite chocolate, a colour, an inside-joke tag line) and we'll send photos of the hamper before it's sealed." },
+  { q: "How do payments work?", a: "Cash on delivery across our local zone, UPI (tajgifts@upi) anywhere in India, and bank transfer or GST invoice for corporate orders. Online card payments are coming soon." },
+  { q: "Are the food items fresh & vegetarian?", a: "Mithai and bakes come from licensed local halwais and bakers in small batches tied to order volumes. Every hamper lists its contents and shelf life on the card inside. Eggless options are default; tell us about allergies and we'll adapt." },
+  { q: "Do you do wedding & corporate bulk orders?", a: "Constantly. Return-gift trays from 20 pieces, corporate boxes from 25, with name tags, brand cards and GST invoicing. Code BULK25 gives 8% off above ₹20,000 — lead time is usually 7–10 days." },
+  { q: "What if something arrives damaged?", a: "Photograph it within 24 hours of delivery and WhatsApp us. We replace the item or refund that line — no forms, no arguing. In three years we've had nine such orders; all nine became free re-shipments the same week." },
+];

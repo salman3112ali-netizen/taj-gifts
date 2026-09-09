@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { admin } from "@/lib/supabase";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { couponDiscount, deliveryFor } from "@/lib/store";
+import { hamperArtUrl } from "@/lib/hamper-art";
+import { workOrderText } from "@/lib/workorder";
+import { notifyOwners } from "@/lib/notify";
 import type { Coupon, Product } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -109,6 +112,24 @@ export async function POST(req: NextRequest) {
       const { data: cc } = await sb.from("coupons").select("uses").eq("code", couponCode).maybeSingle();
       await sb.from("coupons").update({ uses: (cc?.uses ?? 0) + 1 }).eq("code", couponCode);
     }
+
+    // ── studio notification (WhatsApp Cloud API / webhook — optional, silent if unconfigured)
+    const orderRow = { ...row, id: order.id } as Record<string, unknown>;
+    const briefItems = lines.map((l) => ({
+      id: "", order_id: order.id, product_id: l.p.id, slug: l.p.slug, name: l.p.name,
+      image: l.p.image, occasion: l.p.occasion, unit_price: l.unit, base_price: l.p.price,
+      variant: l.variant?.label ?? null, addons: l.addons, qty: l.qty, line_total: l.line_total, created_at: now,
+    }));
+    const preview = hamperArtUrl({
+      names: briefItems.map((b) => b.name),
+      contents: lines.flatMap((l) => l.p.contents ?? []),
+      occasion: lines[0]?.p.occasion,
+      seed: order.id,
+    });
+    notifyOwners({
+      order: orderRow,
+      brief: workOrderText(orderRow as never, briefItems as never, settings as never, preview),
+    }).catch(() => {});
 
     return NextResponse.json({ ok: true, id: order.id, total });
   } catch (e) {

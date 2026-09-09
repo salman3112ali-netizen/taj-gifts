@@ -1,8 +1,10 @@
 "use client";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import type { Coupon, Order, OrderItem, Product } from "@/lib/types";
+import type { Coupon, Order, OrderItem, Product, Settings } from "@/lib/types";
 import { ORDER_STATUSES } from "@/lib/types";
 import { dateTimeFmt, inr, orderCode } from "@/lib/store";
+import { hamperArtUrl } from "@/lib/hamper-art";
+import { workOrderLink } from "@/lib/workorder";
 
 type Lead = { id: string; name: string; phone: string; message: string; created_at: string };
 type Sub = { email: string; created_at: string };
@@ -156,7 +158,23 @@ function Orders({ data, reload }: { data: Data; reload: () => void }) {
                             {o.customer_email && <p><b className="text-ink">Email:</b> {o.customer_email}</p>}
                             {o.gift_note && <p className="rounded-xl bg-butter/60 px-3 py-2 font-script text-lg text-ink">“{o.gift_note}”{o.gift_sender_name ? ` — ${o.gift_sender_name}` : ""}</p>}
                             {o.gift_delivery_date && <p><b className="text-ink">Deliver on:</b> {o.gift_delivery_date}</p>}
-                            <a className="inline-block rounded-full bg-mint px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-ink" href={`https://wa.me/91${o.customer_phone}`} target="_blank" rel="noreferrer">WhatsApp customer</a>
+                            <div className="flex flex-wrap gap-2 pt-1">
+                              <a className="inline-block rounded-full bg-mint px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-ink" href={`https://wa.me/91${o.customer_phone}`} target="_blank" rel="noreferrer">WhatsApp customer</a>
+                              <a
+                                className="inline-block rounded-full bg-rose px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-white"
+                                href={workOrderLink(o, its, data.settings as Settings, hamperArtUrl({ names: its.map((i) => i.name), occasion: its[0]?.occasion ?? undefined, seed: o.id }))}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                 WA work-order to studio
+                              </a>
+                            </div>
+                            <img
+                              src={hamperArtUrl({ names: its.map((i) => i.name), occasion: its[0]?.occasion ?? undefined, seed: o.id })}
+                              alt="AI hamper preview"
+                              loading="lazy"
+                              className="mt-3 h-28 w-24 rounded-xl border border-line object-cover"
+                            />
                           </div>
                         </div>
                       </td>

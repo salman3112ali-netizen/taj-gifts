@@ -3,7 +3,14 @@ import { getSettings } from "@/lib/store";
 import { Reveal, Words } from "@/components/reveal";
 import { SpinBadge } from "@/components/marquee";
 
-export const metadata: Metadata = { title: "Our story", description: "How a home kitchen in Kashipur became a hand-tied gifting studio for all of Uttarakhand." };
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://tajgifts.netlify.app";
+
+export const metadata: Metadata = {
+  title: "Our Story — A Home Hamper Studio in Kashipur, Uttarakhand",
+  description:
+    "How one Diwali at a kitchen table in Kashipur became a hand-tied gifting studio sourcing from pahadi makers, halwais and women's collectives across Uttarakhand.",
+  alternates: { canonical: BASE + "/about" },
+};
 
 export default async function About() {
   const s = await getSettings();
