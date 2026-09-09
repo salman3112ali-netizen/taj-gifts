@@ -30,7 +30,10 @@ export async function getSettings(): Promise<Settings> {
     .eq("id", "shop")
     .maybeSingle();
   const raw = (data?.data ?? {}) as Partial<Settings>;
-  return { ...DEFAULT_SETTINGS, ...raw } as Settings;
+  const merged = { ...DEFAULT_SETTINGS, ...raw } as Settings;
+  // never let the admin hash (or any secret) reach a browser payload
+  delete (merged as Record<string, unknown>).adminPasswordHash;
+  return merged;
 }
 
 export async function getProducts(includeUnpublished = false): Promise<Product[]> {
