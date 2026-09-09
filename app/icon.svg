@@ -1,7 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#F6DAD3"/>
-  <rect x="12" y="28" width="40" height="24" rx="5" fill="#C0697A"/>
-  <rect x="28" y="28" width="8" height="24" fill="#FBF7EF"/>
-  <rect x="10" y="22" width="44" height="8" rx="4" fill="#A2505F"/>
-  <path d="M32 22c-3-8-12-9-13-4s6 6 13 4Zm0 0c3-8 12-9 13-4s-6 6-13 4Z" fill="#FBF7EF"/>
+  <rect width="64" height="64" rx="14" fill="#FBF7EF"/>
+  <text x="30" y="46" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="44" font-weight="600" fill="#3E362C">T</text>
+  <circle cx="49.5" cy="44" r="5" fill="#C0697A"/>
 </svg>

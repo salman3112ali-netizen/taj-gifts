@@ -27,7 +27,7 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
   });
 
   return (
-    <section className="wrap grid gap-12 pb-16 pt-8 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+    <section className="wrap grid gap-12 pb-28 pt-8 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pb-16">
       <Reveal y={24}>
         <div className="lg:sticky lg:top-28">
           <div className="card-img aspect-[4/4.4] rounded-[32px]">
@@ -134,6 +134,7 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
           </p>
         </Reveal>
 
+
         {p.contents && p.contents.length > 0 && (
           <Reveal delay={0.3}>
             <div className="mt-9 rounded-[28px] bg-cream-deep/70 p-7">
@@ -160,6 +161,23 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
             <span className="chip cursor-default">💳 COD · UPI</span>
           </div>
         </Reveal>
+      </div>
+
+      {/* ── mobile sticky buy bar: thumb-reach add-to-basket ── */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-cream/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl lg:hidden">
+        <div className="mx-auto flex max-w-[640px] items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-display text-[15px] font-semibold leading-tight">{p.name}</p>
+            <p className="text-[12px] font-bold text-rose">{inr(unitPrice(toItem()) * qty)}</p>
+          </div>
+          <button
+            disabled={out}
+            onClick={() => { add({ ...toItem() }); setDrawer(true); }}
+            className="btn-primary flex-1 px-4 py-3.5 text-[11px] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {out ? "Sold out" : "Add to basket"}
+          </button>
+        </div>
       </div>
     </section>
   );

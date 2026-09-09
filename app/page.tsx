@@ -78,11 +78,11 @@ export default async function Home() {
               <div className="overflow-hidden rounded-t-[260px] rounded-b-[36px] border border-ink/10 shadow-[0_40px_90px_-40px_rgba(62,54,44,0.45)]">
                 <img src="/img/hero.jpg" alt="Pastel gift hampers hand-tied in Kashipur" className="aspect-[4/4.4] w-full object-cover" />
               </div>
-              <div className="absolute -left-6 top-10 animate-float rounded-2xl border border-ink/10 bg-cream/90 px-4 py-3 shadow-lg backdrop-blur">
+              <div className="absolute left-2 top-6 animate-float rounded-2xl border border-ink/10 bg-cream/90 px-4 py-3 shadow-lg backdrop-blur sm:-left-6 sm:top-10">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-rose">Free delivery</p>
                 <p className="font-display text-lg font-semibold">above {inr(settings.freeDeliveryAbove)}</p>
               </div>
-              <div className="absolute -right-4 bottom-16 animate-float-slow rounded-2xl border border-ink/10 bg-cream/90 px-4 py-3 shadow-lg backdrop-blur">
+              <div className="absolute -right-1 bottom-16 animate-float-slow rounded-2xl border border-ink/10 bg-cream/90 px-4 py-3 shadow-lg backdrop-blur sm:-right-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-mint-deep">COD & UPI</p>
                 <p className="font-display text-lg font-semibold">pay your way</p>
               </div>
@@ -105,12 +105,12 @@ export default async function Home() {
           </div>
           <Link href="/shop" className="btn-ghost">Browse everything</Link>
         </Reveal>
-        <div className="hide-scroll -mx-5 mt-10 flex gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:px-0">
+        <div className="hide-scroll -mx-5 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:px-0">
           {occasions.map((o, i) => {
             const p = products.find((x) => x.occasion === o)!;
             const pastel = ["bg-blush", "bg-lav", "bg-mint", "bg-butter", "bg-peach"][i % 5];
             return (
-              <Reveal key={o} delay={i * 0.06} className="shrink-0">
+              <Reveal key={o} delay={i * 0.06} className="shrink-0 snap-start">
                 <Link href={`/shop?occasion=${encodeURIComponent(o)}`} className={`group block w-[210px] rounded-[26px] ${pastel} p-4 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_24px_50px_-24px_rgba(62,54,44,0.4)]`} data-cursor>
                   <div className="overflow-hidden rounded-[18px]">
                     <img src={p.image} alt={o} className="aspect-square w-full object-cover transition-transform duration-[1.2s] group-hover:scale-108" loading="lazy" />

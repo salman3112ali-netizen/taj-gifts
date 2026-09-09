@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope, Caveat } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/store";
@@ -14,6 +14,12 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--ff-manrope", display:
 const caveat = Caveat({ subsets: ["latin"], variable: "--ff-caveat", display: "swap" });
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://tajgifts.netlify.app";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#fbf7ef",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),

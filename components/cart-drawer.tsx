@@ -44,7 +44,7 @@ export default function CartDrawer() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 py-5">
+            <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-6">
               {items.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
                   <div className="grid h-20 w-20 place-items-center rounded-full bg-blush">
@@ -82,10 +82,10 @@ export default function CartDrawer() {
                             </button>
                           </div>
                           <div className="mt-2.5 flex items-center justify-between">
-                            <div className="flex items-center gap-3 rounded-full border border-ink/15 bg-white px-2 py-1">
-                              <button onClick={() => setQty(key, i.qty - 1)} className="px-1 text-lg leading-none text-ink-soft hover:text-rose" aria-label="Decrease">−</button>
-                              <span className="min-w-4 text-center text-sm font-bold">{i.qty}</span>
-                              <button onClick={() => setQty(key, i.qty + 1)} className="px-1 text-lg leading-none text-ink-soft hover:text-rose" aria-label="Increase">+</button>
+                            <div className="flex items-center gap-1 rounded-full border border-ink/15 bg-white px-1.5 py-1">
+                              <button onClick={() => setQty(key, i.qty - 1)} className="px-2.5 py-1.5 text-lg leading-none text-ink-soft hover:text-rose" aria-label="Decrease">−</button>
+                              <span className="min-w-5 text-center text-sm font-bold">{i.qty}</span>
+                              <button onClick={() => setQty(key, i.qty + 1)} className="px-2.5 py-1.5 text-lg leading-none text-ink-soft hover:text-rose" aria-label="Increase">+</button>
                             </div>
                             <p className="font-display text-[16px] font-semibold">{inr(unitPrice(i) * i.qty)}</p>
                           </div>
@@ -98,7 +98,7 @@ export default function CartDrawer() {
             </div>
 
             {items.length > 0 && (
-              <div className="border-t border-line bg-white/60 px-6 py-5">
+              <div className="border-t border-line bg-white/60 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5 sm:px-6">
                 {coupon ? (
                   <div className="mb-3 flex items-center justify-between rounded-xl bg-mint px-4 py-2.5 text-sm">
                     <span className="font-bold">

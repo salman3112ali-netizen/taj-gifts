@@ -31,7 +31,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="relative z-40 bg-ink py-2 text-center text-[11px] font-bold uppercase tracking-[0.22em] text-cream/90">
+      <div className="relative z-40 bg-ink px-4 py-2 text-center text-[11px] font-bold uppercase leading-relaxed tracking-[0.22em] text-cream/90">
         {settings.announcement}
       </div>
       <header
@@ -42,7 +42,7 @@ export default function Header() {
       >
         <div className={"wrap flex items-center justify-between transition-all duration-500 " + (scrolled ? "py-3" : "py-5")}>
           <Link href="/" className="group flex items-baseline gap-2" data-cursor>
-            <span className="font-display text-[26px] font-semibold leading-none tracking-tight">
+            <span className="font-display text-[26px] font-semibold leading-none tracking-tight transition-colors duration-300 group-hover:text-rose-deep">
               {settings.shopName.split(" ")[0]}
               <span className="text-rose">.</span>
             </span>
@@ -84,7 +84,7 @@ export default function Header() {
                 <path d="M6 7h12l1.5 13.5a1 1 0 0 1-1 1.1H5.5a1 1 0 0 1-1-1.1L6 7Z" />
                 <path d="M9 10V6a3 3 0 0 1 6 0v4" />
               </svg>
-              Basket
+              <span className="hidden min-[400px]:inline">Basket</span>
               <span className="grid h-5 min-w-5 place-items-center rounded-full bg-rose px-1 text-[10px] font-black text-white">{count}</span>
             </button>
             <button onClick={() => setMenu(true)} className="md:hidden" aria-label="Menu">
