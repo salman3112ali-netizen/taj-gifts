@@ -14,16 +14,14 @@ function hashSeed(s: string): number {
 }
 
 export function hamperArtUrl(opts: { names: string[]; contents?: string[]; occasion?: string; seed: string }): string {
-  const subject = (opts.contents && opts.contents.length ? opts.contents : opts.names).slice(0, 8).join(", ");
+  const subject = (opts.contents && opts.contents.length ? opts.contents : opts.names).slice(0, 6).join(", ");
   const prompt =
-    `High-key bright studio product photograph, soft diffused daylight, cream linen backdrop, ` +
-    `pastel palette of blush pink, lavender, mint and butter yellow: ` +
-    `one open natural wicker gift hamper box lined with blush tissue paper, filled neatly with: ${subject}. ` +
-    (opts.occasion ? `${opts.occasion} occasion accents. ` : "") +
-    `All candles unlit, no flames, no smoke, bright ambient light, clean minimal composition, ` +
-    `silk ribbon bow on the box, blank kraft paper gift tag, award-winning editorial styling, no text, no people`;
+    `Sharp studio product photo of an open wicker gift hamper basket on cream linen: ${subject}. ` +
+    (opts.occasion ? `${opts.occasion} accents. ` : "") +
+    `Pastel blush, lavender and mint palette, bright soft daylight, crisp focus, high detail, ` +
+    `clean composition, silk ribbon bow, blank kraft tag, unlit candles only, no text, no people`;
   return (
     `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}` +
-    `?width=768&height=960&seed=${hashSeed(opts.seed)}&model=flux&nologo=true`
+    `?width=1024&height=1280&seed=${hashSeed(opts.seed)}&model=flux&nologo=true`
   );
 }

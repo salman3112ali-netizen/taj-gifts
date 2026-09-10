@@ -3,6 +3,7 @@ import { admin } from "@/lib/supabase";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { couponDiscount, deliveryFor } from "@/lib/store";
 import { hamperArtUrl } from "@/lib/hamper-art";
+import { generateHamperArt, previewPublicUrl, storePreview } from "@/lib/hamper-art-server";
 import { workOrderText } from "@/lib/workorder";
 import { notifyOwners } from "@/lib/notify";
 import type { Coupon, Product } from "@/lib/types";
@@ -120,16 +121,29 @@ export async function POST(req: NextRequest) {
       image: l.p.image, occasion: l.p.occasion, unit_price: l.unit, base_price: l.p.price,
       variant: l.variant?.label ?? null, addons: l.addons, qty: l.qty, line_total: l.line_total, created_at: now,
     }));
-    const preview = hamperArtUrl({
+    let preview = hamperArtUrl({
       names: briefItems.map((b) => b.name),
       contents: lines.flatMap((l) => l.p.contents ?? []),
       occasion: lines[0]?.p.occasion,
       seed: order.id,
     });
+    // powerful-model preview (Gemini/OpenAI) when a key is configured; stored for reuse
+    try {
+      const buf = await generateHamperArt({
+        names: briefItems.map((b) => b.name),
+        contents: lines.flatMap((l) => l.p.contents ?? []),
+        occasion: lines[0]?.p.occasion,
+        seed: order.id,
+      });
+      if (buf && (await storePreview(order.id, buf))) preview = previewPublicUrl(order.id);
+    } catch {
+      /* fall back to free recipe */
+    }
     notifyOwners({
       order: orderRow,
       brief: workOrderText(orderRow as never, briefItems as never, settings as never, preview),
       artUrl: preview,
+      items: briefItems.map((b) => ({ name: b.name, qty: b.qty, variant: b.variant, addons: b.addons.map((a) => a.label), line_total: b.line_total })),
     }).catch(() => {});
 
     return NextResponse.json({ ok: true, id: order.id, total });

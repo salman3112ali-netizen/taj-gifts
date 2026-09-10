@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { admin } from "@/lib/supabase";
 import { getSettings, inr, orderCode, dateTimeFmt, waLink } from "@/lib/store";
 import { hamperArtUrl } from "@/lib/hamper-art";
+import { previewExists, previewPublicUrl } from "@/lib/hamper-art-server";
 import HamperArt from "@/components/hamper-art";
 import type { Order, OrderItem } from "@/lib/types";
 
@@ -28,12 +29,13 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   // artist's preview: deterministic AI render of exactly this hamper
   const slugs = [...new Set(its.map((i) => i.slug))];
   const { data: prods } = await admin().from("products").select("slug,contents,occasion").in("slug", slugs);
-  const artUrl = hamperArtUrl({
+  let artUrl = hamperArtUrl({
     names: its.map((i) => i.name),
     contents: (prods ?? []).flatMap((p: { contents: string[] | null }) => p.contents ?? []),
     occasion: its[0]?.occasion ?? undefined,
     seed: o.id,
   });
+  if (await previewExists(o.id)) artUrl = previewPublicUrl(o.id);
 
   return (
     <section className="wrap max-w-[860px] pb-24 pt-12">
