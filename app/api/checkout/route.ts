@@ -129,6 +129,7 @@ export async function POST(req: NextRequest) {
     notifyOwners({
       order: orderRow,
       brief: workOrderText(orderRow as never, briefItems as never, settings as never, preview),
+      artUrl: preview,
     }).catch(() => {});
 
     return NextResponse.json({ ok: true, id: order.id, total });
