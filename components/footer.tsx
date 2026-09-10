@@ -4,7 +4,7 @@ import { Newsletter } from "./newsletter";
 
 export default function Footer({ settings }: { settings: Settings }) {
   return (
-    <footer className="relative mt-24 overflow-hidden bg-ink text-cream">
+    <footer className="relative mt-24 overflow-hidden bg-ink pb-20 text-cream md:pb-0">
       <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-rose/20 blur-3xl" />
       <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-lav-deep/20 blur-3xl" />
       <div className="wrap relative py-16">

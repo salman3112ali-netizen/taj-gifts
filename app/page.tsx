@@ -32,7 +32,7 @@ export default async function Home() {
         <div className="pointer-events-none absolute -right-32 bottom-0 h-[380px] w-[380px] rounded-full bg-lav/80 blur-[110px]" />
         <div className="pointer-events-none absolute left-1/3 top-1/2 h-[260px] w-[260px] rounded-full bg-mint/60 blur-[90px]" />
 
-        <div className="wrap grid items-center gap-12 pb-16 pt-10 md:pt-16 lg:grid-cols-[1.05fr_1fr] lg:gap-8">
+        <div className="wrap grid items-center gap-10 pb-12 pt-8 md:pt-16 lg:grid-cols-[1.05fr_1fr] lg:gap-8">
           <div className="relative z-10">
             <Reveal>
               <p className="eyebrow">
@@ -52,9 +52,9 @@ export default async function Home() {
               </p>
             </Reveal>
             <Reveal delay={0.6}>
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Link href="/shop" className="btn-primary">Shop the hampers</Link>
-                <Link href="/contact" className="btn-ghost">Build a custom hamper</Link>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <Link href="/shop" className="btn-primary w-full justify-center sm:w-auto">Shop the hampers</Link>
+                <Link href="/contact" className="btn-ghost w-full justify-center sm:w-auto">Build a custom hamper</Link>
               </div>
             </Reveal>
             <Reveal delay={0.75}>
@@ -95,11 +95,11 @@ export default async function Home() {
       <Marquee items={["hand-tied in kashipur", "free delivery above ₹2,499", "same-day dispatch before 2 pm", "custom hampers on whatsapp", "pahadi-made · small batch", "cod & upi accepted"]} />
 
       {/* ───────────────── OCCASIONS ───────────────── */}
-      <section className="wrap py-20 md:py-24">
+      <section className="wrap py-14 md:py-24">
         <Reveal className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="eyebrow">Pick a moment</p>
-            <h2 className="font-display mt-3 max-w-xl text-4xl font-medium leading-[1.05] md:text-5xl">
+            <h2 className="font-display mt-3 max-w-xl text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">
               Every occasion deserves <span className="italic text-rose">its own ribbon.</span>
             </h2>
           </div>
@@ -127,12 +127,12 @@ export default async function Home() {
       </section>
 
       {/* ───────────────── FEATURED ───────────────── */}
-      <section className="bg-cream-deep/60 py-20 md:py-24">
+      <section className="bg-cream-deep/60 py-14 md:py-24">
         <div className="wrap">
           <Reveal className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow">Loved & re-gifted</p>
-              <h2 className="font-display mt-3 text-4xl font-medium leading-[1.05] md:text-5xl">This season's most-wrapped.</h2>
+              <h2 className="font-display mt-3 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">This season's most-wrapped.</h2>
             </div>
             <p className="max-w-xs font-script text-2xl leading-snug text-ink-soft">each hamper leaves our table with a handwritten tag — tell us what it should say</p>
           </Reveal>
@@ -147,7 +147,7 @@ export default async function Home() {
       </section>
 
       {/* ───────────────── STORY ───────────────── */}
-      <section className="wrap grid items-center gap-14 py-24 lg:grid-cols-2">
+      <section className="wrap grid items-center gap-12 py-16 md:py-24 lg:grid-cols-2">
         <Reveal className="relative order-2 lg:order-1">
           <div className="overflow-hidden rounded-[36px] border border-ink/10 shadow-[0_36px_80px_-40px_rgba(62,54,44,0.4)]">
             <img src="/img/story.jpg" alt="Tying a hamper by hand at home in Kashipur" className="aspect-[4/4.6] w-full object-cover" loading="lazy" />
@@ -159,7 +159,7 @@ export default async function Home() {
         <div className="order-1 lg:order-2">
           <Reveal><p className="eyebrow">Our story</p></Reveal>
           <Reveal delay={0.1}>
-            <h2 className="font-display mt-4 text-4xl font-medium leading-[1.06] md:text-[52px]">
+            <h2 className="font-display mt-4 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-[52px]">
               A home studio in the <span className="italic text-rose">foothills of Uttarakhand.</span>
             </h2>
           </Reveal>
@@ -187,11 +187,11 @@ export default async function Home() {
       </section>
 
       {/* ───────────────── PROCESS ───────────────── */}
-      <section className="bg-ink py-20 text-cream md:py-24">
+      <section className="bg-ink py-14 text-cream md:py-24">
         <div className="wrap">
           <Reveal className="text-center">
             <p className="eyebrow text-blush-deep">How gifting works here</p>
-            <h2 className="font-display mx-auto mt-4 max-w-2xl text-4xl font-medium leading-[1.05] md:text-5xl">Four steps between your thought and their doorstep.</h2>
+            <h2 className="font-display mx-auto mt-4 max-w-2xl text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">Four steps between your thought and their doorstep.</h2>
           </Reveal>
           <div className="mt-14 grid gap-6 md:grid-cols-4">
             {[
@@ -213,10 +213,10 @@ export default async function Home() {
       </section>
 
       {/* ───────────────── TESTIMONIALS ───────────────── */}
-      <section className="wrap py-20 md:py-24">
+      <section className="wrap py-14 md:py-24">
         <Reveal className="text-center">
           <p className="eyebrow justify-center">Gift-givers, unfiltered</p>
-          <h2 className="font-display mt-4 text-4xl font-medium md:text-5xl">Notes left on our table.</h2>
+          <h2 className="font-display mt-4 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">Notes left on our table.</h2>
         </Reveal>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
@@ -241,22 +241,22 @@ export default async function Home() {
       </section>
 
       {/* ───────────────── CORPORATE BAND ───────────────── */}
-      <section className="wrap pb-24">
+      <section className="wrap pb-16 md:pb-24">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[40px] bg-lav px-8 py-14 md:px-16 md:py-16">
+          <div className="relative overflow-hidden rounded-[40px] bg-lav px-6 py-10 md:px-16 md:py-16">
             <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-white/40 blur-3xl" />
             <div className="grid items-center gap-10 md:grid-cols-[1.3fr_1fr]">
               <div>
                 <p className="eyebrow">For teams & bulk gifting</p>
-                <h2 className="font-display mt-4 text-4xl font-medium leading-[1.05] md:text-5xl">
+                <h2 className="font-display mt-4 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">
                   25 or 2,500 hampers — <span className="italic text-rose-deep">one very calm point of contact.</span>
                 </h2>
                 <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-ink/70">
                   Name-calligraphy tags, brand cards, GST invoicing and pan-India dispatch. Use code <b>BULK25</b> for 8% off orders above ₹20,000.
                 </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link href="/shop?occasion=Corporate" className="btn-primary">See corporate hampers</Link>
-                  <a href={`https://wa.me/${settings.whatsapp}?text=Hi! I'd like a quote for bulk gifting.`} target="_blank" rel="noreferrer" className="btn-ghost">Get a bulk quote</a>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
+                  <Link href="/shop?occasion=Corporate" className="btn-primary w-full justify-center sm:w-auto">See corporate hampers</Link>
+                  <a href={`https://wa.me/${settings.whatsapp}?text=Hi! I'd like a quote for bulk gifting.`} target="_blank" rel="noreferrer" className="btn-ghost w-full justify-center sm:w-auto">Get a bulk quote</a>
                 </div>
               </div>
               <div className="relative hidden md:block">
@@ -271,11 +271,11 @@ export default async function Home() {
       </section>
 
       {/* ───────────────── FAQ ───────────────── */}
-      <section className="wrap pb-24" id="faq">
+      <section className="wrap pb-16 md:pb-24" id="faq">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
           <Reveal>
             <p className="eyebrow">Good to know</p>
-            <h2 className="font-display mt-4 text-4xl font-medium leading-[1.05] md:text-5xl">Questions, answered softly.</h2>
+            <h2 className="font-display mt-4 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">Questions, answered softly.</h2>
             <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-ink-soft">
               Anything else? WhatsApp us on {settings.phone} — a human (usually with ribbon on their sleeves) replies within the hour.
             </p>

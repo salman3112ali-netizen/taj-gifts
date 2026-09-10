@@ -35,7 +35,7 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
             {p.badge && <span className="absolute left-5 top-5 rounded-full bg-cream/90 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] backdrop-blur">{p.badge}</span>}
           </div>
           {gallery.length > 1 && (
-            <div className="mt-4 flex gap-3">
+            <div className="hide-scroll mt-4 flex gap-3 overflow-x-auto pb-1">
               {gallery.map((g, i) => (
                 <button key={i} onClick={() => setImg(i)} className={"h-20 w-16 overflow-hidden rounded-xl border-2 transition " + (i === img ? "border-rose" : "border-transparent opacity-70 hover:opacity-100")}>
                   <img src={g} alt="" className="h-full w-full object-cover" />
@@ -53,7 +53,7 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
             <Link href="/shop" className="hover:text-rose">Shop</Link> /
             <Link href={`/shop?occasion=${encodeURIComponent(p.occasion)}`} className="hover:text-rose">{p.occasion}</Link>
           </nav>
-          <h1 className="font-display mt-4 text-5xl font-medium leading-[1.02] md:text-6xl">{p.name}</h1>
+          <h1 className="font-display mt-4 text-[34px] font-medium leading-[1.05] sm:text-5xl md:text-6xl">{p.name}</h1>
           <p className="mt-3 font-script text-2xl text-rose">{p.tagline}</p>
           <div className="mt-4 flex items-center gap-3 text-sm text-ink-soft">
             <span className="flex gap-0.5 text-rose">{[...Array(5)].map((_, i) => <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8L12 2.5z" /></svg>)}</span>

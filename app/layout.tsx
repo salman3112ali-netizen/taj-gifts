@@ -7,6 +7,7 @@ import { CartProvider } from "@/lib/cart";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import CartDrawer from "@/components/cart-drawer";
+import MobileTabBar from "@/components/mobile-tabbar";
 import Cursor from "@/components/cursor";
 import Toast from "@/components/toast";
 
@@ -75,6 +76,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Footer settings={settings} />
           <CartDrawer />
           <Toast />
+          <MobileTabBar />
         </CartProvider>
       </body>
     </html>

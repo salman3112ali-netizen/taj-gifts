@@ -81,7 +81,7 @@ h1, h2, h3 { text-wrap: balance; }
   .btn-primary,
   .btn-ghost,
   .btn-rose {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[13px] font-bold tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer select-none;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[13px] font-bold tracking-[0.14em] uppercase transition-all duration-300 cursor-pointer select-none active:scale-[0.97];
   }
   .btn-primary {
     @apply bg-ink text-cream hover:bg-rose-deep hover:-translate-y-0.5 hover:shadow-[0_14px_34px_-12px_rgba(162,80,95,0.55)] active:translate-y-0;
@@ -97,7 +97,7 @@ h1, h2, h3 { text-wrap: balance; }
     @apply inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.3em] text-rose;
   }
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-ink/12 bg-white/70 px-4 py-2 text-xs font-bold tracking-wide text-ink backdrop-blur transition-all duration-300 cursor-pointer hover:border-rose hover:text-rose;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink/12 bg-white/70 px-4 py-2 text-xs font-bold tracking-wide text-ink backdrop-blur transition-all duration-300 cursor-pointer hover:border-rose hover:text-rose active:scale-[0.96];
   }
   .chip-on {
     @apply bg-ink text-cream border-ink hover:text-cream;
@@ -110,6 +110,7 @@ h1, h2, h3 { text-wrap: balance; }
   .card-img { @apply relative overflow-hidden rounded-[26px] bg-cream-deep; }
   .card-img img { @apply h-full w-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.22,1,0.36,1)]; }
   .group:hover .card-img img { transform: scale(1.07); }
+  .group:active .card-img img { transform: scale(1.04); }
 }
 
 .grain {
