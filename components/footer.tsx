@@ -36,6 +36,7 @@ export default function Footer({ settings }: { settings: Settings }) {
               <li><Link className="transition hover:text-blush-deep" href="/about">Our story</Link></li>
               <li><Link className="transition hover:text-blush-deep" href="/contact">Contact & custom hampers</Link></li>
               <li><Link className="transition hover:text-blush-deep" href="/contact#faq">FAQs</Link></li>
+              <li><Link className="transition hover:text-blush-deep" href="/download">📱 Get the mobile app</Link></li>
               <li><Link className="transition hover:text-blush-deep" href="/admin">Store admin</Link></li>
             </ul>
           </div>

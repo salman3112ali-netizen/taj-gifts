@@ -10,6 +10,8 @@ import CartDrawer from "@/components/cart-drawer";
 import MobileTabBar from "@/components/mobile-tabbar";
 import Cursor from "@/components/cursor";
 import Toast from "@/components/toast";
+import SwRegister from "@/components/sw-register";
+import AppBanner from "@/components/app-banner";
 
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--ff-fraunces", display: "swap" });
 const manrope = Manrope({ subsets: ["latin"], variable: "--ff-manrope", display: "swap" });
@@ -71,6 +73,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <div className="grain" aria-hidden />
         <Cursor />
         <CartProvider settings={settings}>
+          <AppBanner />
           <Header />
           <main>{children}</main>
           <Footer settings={settings} />
@@ -78,6 +81,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Toast />
           <MobileTabBar />
         </CartProvider>
+        <SwRegister />
       </body>
     </html>
   );

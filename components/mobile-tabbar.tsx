@@ -10,7 +10,7 @@ export default function MobileTabBar() {
   const { user } = useUser();
   const path = usePathname();
   // pages that own the bottom edge themselves (sticky buy bar / forms / admin)
-  if (["/product", "/checkout", "/order", "/admin"].some((p) => path.startsWith(p))) return null;
+  if (["/product", "/checkout", "/order", "/admin", "/app", "/download"].some((p) => path.startsWith(p))) return null;
 
   const base = "flex flex-col items-center justify-center gap-1 text-[9.5px] font-black uppercase tracking-[0.14em] transition-colors duration-200";
   const on = "text-rose";
