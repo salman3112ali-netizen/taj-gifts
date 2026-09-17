@@ -4,8 +4,7 @@ import InstallButton from "@/components/app/install";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://tajgifts.netlify.app";
 const APK_URL =
-  process.env.NEXT_PUBLIC_APK_URL ||
-  "https://github.com/salman3112ali-netizen/taj-gifts/releases/latest/download/tajgifts.apk";
+  process.env.NEXT_PUBLIC_APK_URL || BASE + "/tajgifts.apk";
 
 export const metadata: Metadata = {
   title: "Download the Taj Gifts app — free",

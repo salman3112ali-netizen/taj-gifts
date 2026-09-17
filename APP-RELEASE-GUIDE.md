@@ -30,23 +30,40 @@ SEO safety: `/app` is robots-disallowed (no duplicate content); `/download` IS i
 - The smart banner on the main site + the `/download` page drive users there.
 - Updates: users get them automatically next launch (service worker refreshes cache).
 
-## 3) Free Android APK anyone can download (zero cost)
+## 3) Your ready-made APK (already built & signed ✅)
 
-Google Play charges a one-time $25 — skip it. Distribute the APK yourself:
+`public/tajgifts.apk` (681 KB) is a real signed Android package — package
+`in.tajgifts.app`, icon = your Taj emblem, opens the `/app` experience in a
+hardware-accelerated WebView with back-button navigation. It is served free by
+Netlify at **`https://tajgifts.netlify.app/tajgifts.apk`** the moment you push,
+and the `/download` page's APK button points straight at it.
 
-1. Go to **https://www.pwabuilder.com** → enter `https://tajgifts.netlify.app` → **Start**.
-   (It reads your manifest + service worker; fix any warnings it shows.)
-2. **Package for stores → Android** → download the generated package (ZIP).
-   Inside: `app-release-signed.apk` (and an `.aab` for Play later). Free, built by Microsoft's cloud tooling.
-3. Rename the APK to `tajgifts.apk` and host it free on **GitHub Releases**:
-   - github.com → your `taj-gifts` repo → **Releases → Create a new release** → tag `app-v1`
-   - attach `tajgifts.apk` as the release binary → publish.
-   - The permanent download URL becomes:
-     `https://github.com/salman3112ali-netizen/taj-gifts/releases/latest/download/tajgifts.apk`
-     (the `/download` page already points there; override with env `NEXT_PUBLIC_APK_URL` if you ever move it.)
-4. Tell users: "Download the APK → open it → allow 'install unknown apps' once → done."
-   WhatsApp/Instagram bio link → `tajgifts.netlify.app/download` → they choose Install or APK.
-5. **New app version?** Repeat 1–3 with tag `app-v2`; PWA users update silently, APK users re-download.
+Install on any Android: download → tap → allow "install unknown apps" once → done.
+(No OBB file exists or is needed — OBBs are only giant game data packs.)
+
+**Rebuild it any time** (source + toolchain recipe): `app/` sources live in the
+agent workspace `apk-build/app` (AndroidManifest.xml + MainActivity.java); the chain is
+`aapt2 compile → aapt2 link → javac → d8 → zipalign → apksigner` with build-tools 34.
+Keystore alias `tajgifts` (password in your vault — ask the agent if lost). Bump
+`versionCode` in the manifest for each release so Android offers updates.
+
+**Extra free mirrors (optional):**
+- **GitHub Releases**: repo → Releases → New release → attach `tajgifts.apk` → permanent URL
+  `…/releases/latest/download/tajgifts.apk` (override on the site with env `NEXT_PUBLIC_APK_URL`).
+- **Uptodown** (huge in India): free developer upload, no fee, real store listing.
+- **Amazon Appstore** & **Huawei AppGallery**: free registration, free listing.
+
+## 3b) Google Play Store — the honest truth
+
+Play is **NOT free**: Google charges a **one-time $25** developer registration. There is
+no legal free route onto Play. If you ever pay it, the path is:
+1. play.google.com/console → create account ($25 once).
+2. Play requires **AAB** (not APK) since 2021 → generate it free at **PWABuilder.com**
+   (paste your URL → Android package → `.aab`) or via Bubblewrap CLI.
+3. New *personal* accounts must run a **14-day closed test with 12+ opted-in testers**
+   before production release (Google's anti-spam rule) — plan for it.
+4. Target-API rules: PWABuilder's output always meets them.
+Until then, your APK + PWA + free stores above reach every customer you have, for ₹0.
 
 ## 4) iPhone reality (honest note)
 
