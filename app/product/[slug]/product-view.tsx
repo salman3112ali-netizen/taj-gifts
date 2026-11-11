@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Product, Settings } from "@/lib/types";
 import { unitPrice } from "@/lib/types";
-import { inr, waLink } from "@/lib/store";
+import { inr, waLink } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { Reveal } from "@/components/reveal";
 
@@ -32,7 +32,7 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
         <div className="lg:sticky lg:top-28">
           <div className="card-img aspect-[4/4.4] rounded-[32px]">
             <img src={gallery[img]} alt={p.name} className="absolute inset-0" />
-            {p.badge && <span className="absolute left-5 top-5 rounded-full bg-cream/90 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] backdrop-blur">{p.badge}</span>}
+            {p.badge && <span className="absolute left-5 top-5 rounded-full bg-cream/90 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.18em] backdrop-blur">{p.badge}</span>}
           </div>
           {gallery.length > 1 && (
             <div className="hide-scroll mt-4 flex gap-3 overflow-x-auto pb-1">
@@ -48,24 +48,26 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
 
       <div>
         <Reveal>
-          <nav className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-ink-soft">
+          <nav className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-soft">
             <Link href="/" className="hover:text-rose">Home</Link> /
             <Link href="/shop" className="hover:text-rose">Shop</Link> /
             <Link href={`/shop?occasion=${encodeURIComponent(p.occasion)}`} className="hover:text-rose">{p.occasion}</Link>
           </nav>
           <h1 className="font-display mt-4 text-[34px] font-medium leading-[1.05] sm:text-5xl md:text-6xl">{p.name}</h1>
           <p className="mt-3 font-script text-2xl text-rose">{p.tagline}</p>
-          <div className="mt-4 flex items-center gap-3 text-sm text-ink-soft">
-            <span className="flex gap-0.5 text-rose">{[...Array(5)].map((_, i) => <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8L12 2.5z" /></svg>)}</span>
-            <b className="text-ink">{p.rating}</b> · {p.reviews} happy gift-givers
-          </div>
+          {p.reviews > 0 && p.rating > 0 && (
+            <div className="mt-4 flex items-center gap-3 text-sm text-ink-soft">
+              <span className="flex gap-0.5 text-rose" aria-label={`${p.rating} out of 5 from ${p.reviews} verified product reviews`}>{[...Array(5)].map((_, i) => <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8L12 2.5z" /></svg>)}</span>
+              <span className="font-medium text-ink">{p.rating}</span> · {p.reviews} product review{p.reviews === 1 ? "" : "s"}
+            </div>
+          )}
         </Reveal>
 
         <Reveal delay={0.1}>
           <div className="mt-6 flex items-end gap-3">
-            <p className="font-display text-4xl font-semibold">{inr(unit)}</p>
+            <p className="font-display text-4xl font-medium">{inr(unit)}</p>
             {p.compare_at && <p className="pb-1 text-lg text-ink-soft line-through">{inr(p.compare_at)}</p>}
-            {p.compare_at && <span className="mb-1.5 rounded-full bg-mint px-3 py-1 text-[11px] font-black uppercase tracking-wider text-ink">save {inr(p.compare_at - p.price)}</span>}
+            {p.compare_at && <span className="mb-1.5 rounded-full bg-mint px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-ink">save {inr(p.compare_at - p.price)}</span>}
           </div>
           <p className="mt-4 text-[15px] leading-relaxed text-ink-soft">{p.description}</p>
         </Reveal>
@@ -93,13 +95,13 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
             <div className="space-y-2.5">
               {p.addons.map((a) => (
                 <label key={a.label} className={"flex cursor-pointer items-center justify-between rounded-2xl border px-5 py-3.5 transition " + (addons.includes(a.label) ? "border-rose bg-blush/50" : "border-ink/12 bg-white/60 hover:border-ink/30")}>
-                  <span className="flex items-center gap-3 text-[14px] font-semibold">
+                  <span className="flex items-center gap-3 text-[14px] font-medium">
                     <span className={"grid h-5 w-5 place-items-center rounded-md border transition " + (addons.includes(a.label) ? "border-rose bg-rose text-white" : "border-ink/25")}>
                       {addons.includes(a.label) && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4"><path d="M4 12.5 9.5 18 20 6.5" /></svg>}
                     </span>
                     {a.label}
                   </span>
-                  <span className="text-sm font-bold text-rose">+{inr(a.price)}</span>
+                  <span className="text-sm font-medium text-rose">+{inr(a.price)}</span>
                   <input type="checkbox" className="sr-only" checked={addons.includes(a.label)} onChange={() => setAddons((s) => (s.includes(a.label) ? s.filter((x) => x !== a.label) : [...s, a.label]))} />
                 </label>
               ))}
@@ -111,7 +113,7 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-4 rounded-full border border-ink/15 bg-white px-4 py-3">
               <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-xl leading-none text-ink-soft hover:text-rose" aria-label="Decrease quantity">−</button>
-              <span className="min-w-5 text-center font-display text-lg font-semibold">{qty}</span>
+              <span className="min-w-5 text-center font-display text-lg font-medium">{qty}</span>
               <button onClick={() => setQty(Math.min(p.stock, qty + 1))} className="text-xl leading-none text-ink-soft hover:text-rose" aria-label="Increase quantity">+</button>
             </div>
             <button
@@ -138,7 +140,7 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
         {p.contents && p.contents.length > 0 && (
           <Reveal delay={0.3}>
             <div className="mt-9 rounded-[28px] bg-cream-deep/70 p-7">
-              <p className="font-display text-xl font-semibold">What's inside</p>
+              <p className="font-display text-xl font-medium">What's inside</p>
               <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
                 {p.contents.map((c) => (
                   <li key={c} className="flex items-start gap-2.5 text-[14px] leading-snug text-ink/80">
@@ -167,8 +169,8 @@ export default function ProductView({ p, settings }: { p: Product; settings: Set
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-cream/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl lg:hidden">
         <div className="mx-auto flex max-w-[640px] items-center gap-3">
           <div className="min-w-0 flex-1">
-            <p className="truncate font-display text-[15px] font-semibold leading-tight">{p.name}</p>
-            <p className="text-[12px] font-bold text-rose">{inr(unitPrice(toItem()) * qty)}</p>
+            <p className="truncate font-display text-[15px] font-medium leading-tight">{p.name}</p>
+            <p className="text-[12px] font-medium text-rose">{inr(unitPrice(toItem()) * qty)}</p>
           </div>
           <button
             disabled={out}

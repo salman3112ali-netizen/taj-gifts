@@ -8,7 +8,7 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://tajgifts.netlify.app";
 export const metadata: Metadata = {
   title: "Our Story — A Home Hamper Studio in Kashipur, Uttarakhand",
   description:
-    "How one Diwali at a kitchen table in Kashipur became a hand-tied gifting studio sourcing from pahadi makers, halwais and women's collectives across Uttarakhand.",
+    "Meet Taj Gifts, a home hamper studio in Kashipur, Uttarakhand. Browse clear product details, request a custom gifting conversation and keep account orders visible after checkout.",
   alternates: { canonical: BASE + "/about" },
 };
 
@@ -17,7 +17,7 @@ export default async function About() {
   return (
     <section className="pb-24">
       <div className="wrap pt-12 md:pt-16">
-        <Reveal><p className="eyebrow">Since one Diwali, several thousand ribbons ago</p></Reveal>
+        <Reveal><p className="eyebrow">A home hamper studio in Kashipur</p></Reveal>
         <h1 className="font-display mt-4 max-w-4xl text-5xl font-medium leading-[1.02] md:text-7xl">
           <Words text="We tie hampers the way" />
           <br />
@@ -37,25 +37,25 @@ export default async function About() {
           <Reveal><p className="font-script text-3xl text-rose">namaste, we're {s.shopName} —</p></Reveal>
           <Reveal delay={0.1}>
             <p>
-              a family gifting studio running out of a sunny home in {s.city}, {s.state}. It started with one Diwali when we couldn't find a gift box that felt like <em>us</em> — so we tied fifteen of them at the kitchen table, and neighbours kept asking for "one more, but for a birthday".
+              a family gifting studio working from {s.city}, {s.state}. We focus on gift hampers that feel considered rather than generic: a clear list of contents, a handwritten note, and a delivery plan that fits the recipient and occasion.
             </p>
           </Reveal>
           <Reveal delay={0.15}>
             <p>
-              Today every hamper still begins the same way: sourced from pahadi makers we know by name — village co-op honey and jams, halwai mithai in small licensed batches, candles poured by a women's collective in Ramnagar — then styled, ribbon-tied and double-boxed at home.
+              Each available hamper is assembled and ribbon-tied at the studio. Contents, variants and add-ons are listed on the product page so you can choose deliberately; for allergies, dietary needs or a fully customised order, please ask before placing it.
             </p>
           </Reveal>
           <Reveal delay={0.2}>
             <p>
-              We stay deliberately small-batch. It means lead times on made-to-order trays, and festival windows that fill up. It also means no hamper leaves this house with a loose bow, a sad petal, or a note we wouldn't sign ourselves.
+              We stay deliberately small-batch. Made-to-order trays and festival windows can need additional lead time, so checkout and the studio will confirm what is realistically possible before a promise is made.
             </p>
           </Reveal>
           <Reveal delay={0.25}>
             <div className="grid grid-cols-3 gap-4 pt-4">
-              {[["12,000+", "hampers tied"], ["9", "pahadi maker partners"], ["4.9★", "average rating"]].map(([a, b]) => (
+              {[["Hand-tied", "at the studio"], ["Small batch", "made for the moment"], ["Account-backed", "private order history"]].map(([a, b]) => (
                 <div key={b} className="rounded-3xl bg-cream-deep/80 p-5 text-center">
-                  <p className="font-display text-3xl font-semibold text-ink">{a}</p>
-                  <p className="mt-1 text-[11px] font-black uppercase tracking-[0.16em] text-ink-soft">{b}</p>
+                  <p className="font-display text-3xl font-medium text-ink">{a}</p>
+                  <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.16em] text-ink-soft">{b}</p>
                 </div>
               ))}
             </div>
@@ -67,14 +67,14 @@ export default async function About() {
         <Reveal className="text-center"><h2 className="font-display text-4xl font-medium md:text-5xl">What we promise, every single box.</h2></Reveal>
         <div className="mt-12 grid gap-6 md:grid-cols-4">
           {[
-            { t: "Honest contents", d: "Every item listed on the card inside — brands, bakers, shelf life. No mystery mithai.", bg: "bg-blush" },
-            { t: "Fresh over frozen", d: "Food is ordered from makers against real order volume, not warehoused for months.", bg: "bg-mint" },
-            { t: "Photographed proofs", d: "Custom & bulk orders get photos before sealing. What you approve is what arrives.", bg: "bg-lav" },
-            { t: "Damage? Replaced.", d: "A photo within 24 hours and we re-ship or refund that line. Nine times in three years. Nine.", bg: "bg-butter" },
+            { t: "Clear product details", d: "Review listed contents, variants and add-ons before adding a hamper to your basket.", bg: "bg-blush" },
+            { t: "Ask before ordering", d: "For allergies, dietary needs, bulk gifting or a custom request, speak with the studio first.", bg: "bg-mint" },
+            { t: "Account-backed orders", d: "An account keeps your order history and private tracking in one place.", bg: "bg-lav" },
+            { t: "Delivery issue? Tell us promptly.", d: "If something arrives damaged or incorrect, contact us within 24 hours with clear photos so we can review the right resolution.", bg: "bg-butter" },
           ].map((v, i) => (
             <Reveal key={v.t} delay={i * 0.08}>
               <div className={`h-full rounded-[28px] ${v.bg} p-7`}>
-                <p className="font-display text-xl font-semibold">{v.t}</p>
+                <p className="font-display text-xl font-medium">{v.t}</p>
                 <p className="mt-2.5 text-[14px] leading-relaxed text-ink/70">{v.d}</p>
               </div>
             </Reveal>

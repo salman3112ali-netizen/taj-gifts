@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { admin } from "@/lib/supabase";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { customerVisibleOtp, validTrackingToken } from "@/lib/fulfilment";
+import { customerAppIdentity } from "@/lib/customer-app-auth";
+import { ownsOrClaimsLegacyOrder } from "@/lib/order-access";
 
 export const dynamic = "force-dynamic";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -20,11 +22,11 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
   if (!order) return NextResponse.json({ ok: false, error: "Order not found." }, { status: 404 });
 
   const rawToken = req.nextUrl.searchParams.get("t");
-  const account = await getCurrentUser().catch(() => null);
+  // Browser accounts use cookies; native Taj accounts use an app-scoped bearer.
+  const account = customerAppIdentity(req) ?? await getCurrentUser().catch(() => null);
   const tokenOk = validTrackingToken(order.tracking_token_hash as string | null, rawToken);
-  const accountOk = !!account && !!order.user_id && account.id === order.user_id;
-  const legacy = !order.tracking_token_hash;
-  if (!tokenOk && !accountOk && !legacy) {
+  const accountOk = await ownsOrClaimsLegacyOrder(order, account);
+  if (!tokenOk && !accountOk) {
     return NextResponse.json({ ok: false, error: "Open the private tracking link from your Taj Gifts confirmation or sign in to the account used for this order." }, { status: 401 });
   }
 

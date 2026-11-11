@@ -13,6 +13,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: BASE + "/shop", changeFrequency: "daily", priority: 0.9, lastModified: now },
     { url: BASE + "/about", changeFrequency: "monthly", priority: 0.6, lastModified: now },
     { url: BASE + "/contact", changeFrequency: "monthly", priority: 0.6, lastModified: now },
+    { url: BASE + "/gift-hampers-kashipur", changeFrequency: "weekly", priority: 0.85, lastModified: now },
+    { url: BASE + "/gift-hampers-uttarakhand", changeFrequency: "weekly", priority: 0.8, lastModified: now },
+    { url: BASE + "/policies", changeFrequency: "yearly", priority: 0.35, lastModified: now },
     { url: BASE + "/download", changeFrequency: "monthly", priority: 0.5, lastModified: now },
   ];
   const prod: MetadataRoute.Sitemap = products.map((p) => ({

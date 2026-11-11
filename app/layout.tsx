@@ -28,15 +28,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
   title: {
-    default: "Taj Gifts — Hand-tied Gift Hampers in Kashipur, Uttarakhand | Free Local Delivery",
+    default: "Taj Gifts — Hand-tied Gift Hampers in Kashipur, Uttarakhand",
     template: "%s · Taj Gifts",
   },
   description:
-    "Buy hand-tied gift hampers online from Kashipur, Uttarakhand — Diwali & festive boxes, wedding return-gift trays, baby, anniversary, self-care and pahadi-special hampers. Same-day local delivery, COD & UPI, custom hampers on WhatsApp.",
+    "Explore hand-tied gift hampers from Kashipur, Uttarakhand for festivals, weddings, birthdays, baby celebrations, self-care and corporate gifting. Delivery availability and payment options are confirmed at checkout.",
   keywords: [
     "gift hampers Uttarakhand", "gift hampers Kashipur", "gift boxes India online",
-    "diwali gift hamper", "wedding return gifts Uttarakhand", "corporate gifting Dehradun Nainital",
-    "pahadi gift box", "rakhi hamper", "baby shower hamper India", "custom gift hamper WhatsApp",
+    "diwali gift hamper", "wedding return gifts Uttarakhand", "corporate gift hampers Uttarakhand",
+    "pahadi gift box", "rakhi hamper", "baby shower hamper", "custom gift hamper Kashipur",
   ],
   alternates: { canonical: BASE },
   openGraph: {
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     url: BASE,
     siteName: "Taj Gifts",
     title: "Taj Gifts — hand-tied hampers from the hills of Uttarakhand",
-    description: "Pastel-perfect gift hampers made at home in Kashipur. Same-day local delivery, COD & UPI, custom hampers on WhatsApp.",
+    description: "Hand-tied gift hampers from Kashipur, Uttarakhand. Explore the collection or ask about a custom gifting request.",
     images: [{ url: BASE + "/img/hero.jpg", width: 1344, height: 768, alt: "Pastel gift hampers hand-tied in Kashipur" }],
   },
   twitter: {

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import type { Product } from "@/lib/types";
-import { inr } from "@/lib/store";
+import { inr } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 
 /** Compact app-style product card: big tap target, one-tap add. */
@@ -11,7 +11,7 @@ export default function AppProductCard({ p }: { p: Product }) {
     <Link href={`/app/product/${p.slug}`} className="group block active:opacity-90">
       <div className="card-img aspect-[4/5] rounded-[20px]">
         <img src={p.image} alt={p.name} loading="lazy" className="absolute inset-0" />
-        {p.badge && <span className="absolute left-3 top-3 rounded-full bg-cream/90 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-ink backdrop-blur">{p.badge}</span>}
+        {p.badge && <span className="absolute left-3 top-3 rounded-full bg-cream/90 px-2.5 py-1 text-[9px] font-medium uppercase tracking-[0.16em] text-ink backdrop-blur">{p.badge}</span>}
         <button
           aria-label={`Add ${p.name} to cart`}
           onClick={(e) => {
@@ -24,10 +24,10 @@ export default function AppProductCard({ p }: { p: Product }) {
         </button>
       </div>
       <div className="mt-2.5 px-0.5">
-        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-rose">{p.occasion}</p>
-        <h3 className="font-display mt-0.5 line-clamp-1 text-[15px] font-semibold leading-tight">{p.name}</h3>
+        <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-rose">{p.occasion}</p>
+        <h3 className="font-display mt-0.5 line-clamp-1 text-[15px] font-medium leading-tight">{p.name}</h3>
         <div className="mt-0.5 flex items-baseline gap-1.5">
-          <p className="font-display text-[15px] font-semibold">{inr(p.price)}</p>
+          <p className="font-display text-[15px] font-medium">{inr(p.price)}</p>
           {p.compare_at && <p className="text-[11px] text-ink-soft/60 line-through">{inr(p.compare_at)}</p>}
         </div>
       </div>

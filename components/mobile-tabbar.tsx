@@ -12,7 +12,7 @@ export default function MobileTabBar() {
   // pages that own the bottom edge themselves (sticky buy bar / forms / admin)
   if (["/product", "/checkout", "/order", "/admin", "/app", "/download"].some((p) => path.startsWith(p))) return null;
 
-  const base = "flex flex-col items-center justify-center gap-1 text-[9.5px] font-black uppercase tracking-[0.14em] transition-colors duration-200";
+  const base = "flex flex-col items-center justify-center gap-1 text-[9.5px] font-medium uppercase tracking-[0.14em] transition-colors duration-200";
   const on = "text-rose";
   const off = "text-ink-soft/80";
 
@@ -43,7 +43,7 @@ export default function MobileTabBar() {
               <path d="M8 10V7a4 4 0 0 1 8 0v3" />
             </svg>
             {count > 0 && (
-              <span className="absolute -right-2.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose px-1 text-[9px] font-black text-white">
+              <span className="absolute -right-2.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose px-1 text-[9px] font-medium text-white">
                 {count}
               </span>
             )}

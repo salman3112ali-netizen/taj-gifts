@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   alternates: { canonical: BASE + "/shop" },
 };
 
-export default async function Shop({ searchParams }: { searchParams: Promise<{ occasion?: string }> }) {
-  const { occasion } = await searchParams;
+export default async function Shop({ searchParams }: { searchParams: Promise<{ occasion?: string; q?: string }> }) {
+  const { occasion, q } = await searchParams;
   const products = await getProducts();
-  return <ShopClient products={products} initialOccasion={occasion || "All"} />;
+  return <ShopClient products={products} initialOccasion={occasion || "All"} initialQuery={q || ""} />;
 }

@@ -11,9 +11,8 @@ export function siteJsonLd(s: Settings) {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": ["Organization", "LocalBusiness"],
+        "@type": ["GiftShop", "LocalBusiness"],
         "@id": BASE + "#business",
-        additionalType: "https://schema.org/GiftShop",
         name: s.shopName,
         slogan: s.tagline,
         url: BASE,
@@ -32,8 +31,20 @@ export function siteJsonLd(s: Settings) {
           postalCode: s.pincode,
           addressCountry: "IN",
         },
+        geo: { "@type": "GeoCoordinates", latitude: 29.2097, longitude: 79.0077 },
         areaServed: [s.city, s.state, "India"],
         hasMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.shopName + " " + s.city)}`,
+        sameAs: [
+          "https://www.youtube.com/@tajgifts",
+          "https://www.instagram.com/tajgifts.kashipur",
+        ],
+        contactPoint: [{
+          "@type": "ContactPoint",
+          telephone: s.phone,
+          contactType: "customer service",
+          areaServed: "IN",
+          availableLanguage: ["en", "hi"],
+        }],
       },
       {
         "@type": "WebSite",
@@ -71,6 +82,28 @@ export function productJsonLd(p: Product, s: Settings) {
       availability: p.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       seller: { "@id": BASE + "#business" },
       areaServed: "IN",
+    },
+  };
+}
+
+export function collectionJsonLd(name: string, description: string, path: string, products: Product[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${BASE}${path}#collection`,
+    name,
+    description,
+    url: `${BASE}${path}`,
+    isPartOf: { "@id": `${BASE}#website` },
+    about: { "@id": `${BASE}#business` },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: products.slice(0, 24).map((p, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${BASE}/product/${p.slug}`,
+        name: p.name,
+      })),
     },
   };
 }

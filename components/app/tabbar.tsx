@@ -20,11 +20,11 @@ export default function AppTabBar() {
         {TABS.map((t) => {
           const active = t.href === "/app" ? path === "/app" : path.startsWith(t.href);
           return (
-            <Link key={t.href} href={t.href} className={"relative flex flex-col items-center justify-center gap-0.5 text-[9.5px] font-black uppercase tracking-[0.12em] transition-colors " + (active ? "text-rose" : "text-ink-soft/75")} aria-label={t.label}>
+            <Link key={t.href} href={t.href} className={"relative flex flex-col items-center justify-center gap-0.5 text-[9.5px] font-medium uppercase tracking-[0.12em] transition-colors " + (active ? "text-rose" : "text-ink-soft/75")} aria-label={t.label}>
               <span className="relative">
                 {t.icon(active)}
                 {t.href === "/app/cart" && count > 0 && (
-                  <span className="absolute -right-2.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose px-1 text-[9px] font-black text-white">{count}</span>
+                  <span className="absolute -right-2.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-rose px-1 text-[9px] font-medium text-white">{count}</span>
                 )}
               </span>
               {t.label}

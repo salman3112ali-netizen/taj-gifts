@@ -12,7 +12,7 @@ export default function Forgot() {
     <AuthShell title="Forgot password?" script="it happens to the best of us">
       {sent ? (
         <div className="rounded-2xl bg-mint p-6 text-[15px] leading-relaxed">
-          <p className="font-bold">Reset link sent to {email}.</p>
+          <p className="font-medium">Reset link sent to {email}.</p>
           <p className="mt-2 text-ink/70">It lands within a minute. The link opens a secure page where you pick a new password.</p>
         </div>
       ) : (
@@ -28,7 +28,7 @@ export default function Forgot() {
           }}
         >
           <div><label className="label">Your email</label><input className="input" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" /></div>
-          {err && <p className="rounded-xl bg-blush px-4 py-3 text-sm font-bold text-rose-deep">{err}</p>}
+          {err && <p className="rounded-xl bg-blush px-4 py-3 text-sm font-medium text-rose-deep">{err}</p>}
           <button className="btn-rose w-full">Email me a reset link</button>
         </form>
       )}

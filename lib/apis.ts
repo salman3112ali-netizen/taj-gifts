@@ -30,10 +30,6 @@ export const API_FIELDS = {
   callmebotPhone: "CALLMEBOT_PHONE",
   rzpKeyId: "RAZORPAY_KEY_ID",
   rzpKeySecret: "RAZORPAY_KEY_SECRET",
-  geminiKey: "GEMINI_API_KEY",
-  geminiModel: "GEMINI_IMAGE_MODEL",
-  openaiKey: "OPENAI_API_KEY",
-  openaiModel: "OPENAI_IMAGE_MODEL",
 } as const;
 
 export type ApiCfg = Record<keyof typeof API_FIELDS, string>;

@@ -26,20 +26,24 @@ export default function Reset() {
   return (
     <AuthShell title="Pick a new password" script="fresh start, same hampers">
       {done ? (
-        <div className="rounded-2xl bg-mint p-6 text-[15px] font-bold">Password updated — signing you in…</div>
+        <div className="rounded-2xl bg-mint p-6 text-[15px] font-medium">Password updated — signing you in…</div>
       ) : (
         <form
           className="space-y-4"
           onSubmit={async (e) => {
             e.preventDefault();
+            setErr(null);
+            if (pw.length < 10) {
+              return setErr("Please use at least 10 characters — a short phrase you'll remember works well.");
+            }
             const { error } = await browserSupabase().auth.updateUser({ password: pw });
             if (error) return setErr(error.message);
             setDone(true);
             setTimeout(() => router.push("/account"), 900);
           }}
         >
-          <div><label className="label">New password</label><input className="input" type="password" required minLength={8} value={pw} onChange={(e) => setPw(e.target.value)} placeholder="8+ characters" /></div>
-          {err && <p className="rounded-xl bg-blush px-4 py-3 text-sm font-bold text-rose-deep">{err}</p>}
+          <div><label className="label">New password</label><input className="input" type="password" required minLength={10} value={pw} onChange={(e) => setPw(e.target.value)} placeholder="10+ characters" /></div>
+          {err && <p className="rounded-xl bg-blush px-4 py-3 text-sm font-medium text-rose-deep">{err}</p>}
           <button className="btn-rose w-full">Update password</button>
         </form>
       )}

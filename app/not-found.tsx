@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <section className="wrap grid min-h-[70vh] place-items-center pb-24 pt-16 text-center">
       <div>
-        <p className="font-display text-7xl font-semibold">
+        <p className="font-display text-7xl font-medium">
           Taj<span className="text-rose">.</span>
         </p>
         <p className="eyebrow mt-6">404 — this ribbon leads nowhere</p>

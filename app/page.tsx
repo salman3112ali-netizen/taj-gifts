@@ -11,9 +11,9 @@ import { JsonLd, siteJsonLd, faqJsonLd } from "@/lib/seo";
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://tajgifts.netlify.app";
 
 export const metadata: Metadata = {
-  title: "Taj Gifts — Hand-tied Gift Hampers in Kashipur, Uttarakhand | Free Local Delivery",
+  title: "Taj Gifts — Hand-tied Gift Hampers in Kashipur, Uttarakhand",
   description:
-    "Buy hand-tied gift hampers online from Kashipur, Uttarakhand — Diwali & festive boxes, wedding return-gift trays, baby, anniversary, self-care and pahadi-special hampers. Same-day local delivery, COD & UPI, custom hampers on WhatsApp +91 76688 19833.",
+    "Explore hand-tied gift hampers from Kashipur, Uttarakhand for festivals, weddings, birthdays, baby celebrations, self-care and corporate gifting. Delivery availability and payment options are confirmed at checkout.",
   alternates: { canonical: BASE + "/" },
 };
 
@@ -58,17 +58,12 @@ export default async function Home() {
               </div>
             </Reveal>
             <Reveal delay={0.75}>
-              <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-[13px] font-semibold text-ink-soft">
-                <span className="flex items-center gap-2">
-                  <span className="font-display text-xl font-semibold text-ink">12,000+</span> hampers tied
-                </span>
+              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] font-medium text-ink-soft">
+                <span>Hand-tied in {settings.city}</span>
                 <span className="h-4 w-px bg-ink/20" />
-                <span className="flex items-center gap-1.5">
-                  <Stars />
-                  <span className="font-display text-xl font-semibold text-ink">4.9</span> from 900+ gifts-givers
-                </span>
+                <span>Private account checkout</span>
                 <span className="h-4 w-px bg-ink/20" />
-                <span>Same-day dispatch in {settings.city}</span>
+                <span>Local delivery availability checked by pincode</span>
               </div>
             </Reveal>
           </div>
@@ -79,12 +74,12 @@ export default async function Home() {
                 <img src="/img/hero.jpg" alt="Pastel gift hampers hand-tied in Kashipur" className="aspect-[4/4.4] w-full object-cover" />
               </div>
               <div className="absolute left-2 top-6 animate-float rounded-2xl border border-ink/10 bg-cream/90 px-4 py-3 shadow-lg backdrop-blur sm:-left-6 sm:top-10">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-rose">Free delivery</p>
-                <p className="font-display text-lg font-semibold">above {inr(settings.freeDeliveryAbove)}</p>
+                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-rose">Free delivery</p>
+                <p className="font-display text-lg font-medium">above {inr(settings.freeDeliveryAbove)}</p>
               </div>
               <div className="absolute -right-1 bottom-16 animate-float-slow rounded-2xl border border-ink/10 bg-cream/90 px-4 py-3 shadow-lg backdrop-blur sm:-right-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-mint-deep">COD & UPI</p>
-                <p className="font-display text-lg font-semibold">pay your way</p>
+                <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-mint-deep">COD & UPI</p>
+                <p className="font-display text-lg font-medium">pay your way</p>
               </div>
               <SpinBadge className="absolute -bottom-8 -left-8 hidden md:block" />
             </div>
@@ -92,7 +87,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <Marquee items={["hand-tied in kashipur", "free delivery above ₹2,499", "same-day dispatch before 2 pm", "custom hampers on whatsapp", "pahadi-made · small batch", "cod & upi accepted"]} />
+      <Marquee items={["hand-tied in kashipur", `free delivery above ${inr(settings.freeDeliveryAbove)}`, "local delivery checked by pincode", "custom hampers on whatsapp", "small-batch gifting", "account-secure checkout"]} />
 
       {/* ───────────────── OCCASIONS ───────────────── */}
       <section className="wrap py-14 md:py-24">
@@ -115,8 +110,8 @@ export default async function Home() {
                   <div className="overflow-hidden rounded-[18px]">
                     <img src={p.image} alt={o} className="aspect-square w-full object-cover transition-transform duration-[1.2s] group-hover:scale-108" loading="lazy" />
                   </div>
-                  <p className="mt-3 px-1 font-display text-xl font-semibold">{o}</p>
-                  <p className="px-1 text-[12px] font-bold uppercase tracking-[0.16em] text-ink/55">
+                  <p className="mt-3 px-1 font-display text-xl font-medium">{o}</p>
+                  <p className="px-1 text-[12px] font-medium uppercase tracking-[0.16em] text-ink/55">
                     {products.filter((x) => x.occasion === o).length} hamper{products.filter((x) => x.occasion === o).length > 1 ? "s" : ""}
                   </p>
                 </Link>
@@ -131,8 +126,8 @@ export default async function Home() {
         <div className="wrap">
           <Reveal className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="eyebrow">Loved & re-gifted</p>
-              <h2 className="font-display mt-3 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">This season's most-wrapped.</h2>
+            <p className="eyebrow">Featured collection</p>
+            <h2 className="font-display mt-3 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">A thoughtful hamper for the occasion.</h2>
             </div>
             <p className="max-w-xs font-script text-2xl leading-snug text-ink-soft">each hamper leaves our table with a handwritten tag — tell us what it should say</p>
           </Reveal>
@@ -153,7 +148,7 @@ export default async function Home() {
             <img src="/img/story.jpg" alt="Tying a hamper by hand at home in Kashipur" className="aspect-[4/4.6] w-full object-cover" loading="lazy" />
           </div>
           <div className="absolute -right-5 -top-6 rotate-6 rounded-2xl bg-butter px-5 py-3 shadow-lg">
-            <p className="font-script text-2xl text-ink">est. at our kitchen table</p>
+            <p className="font-script text-2xl text-ink">styled with care</p>
           </div>
         </Reveal>
         <div className="order-1 lg:order-2">
@@ -165,18 +160,18 @@ export default async function Home() {
           </Reveal>
           <Reveal delay={0.2}>
             <p className="mt-6 text-[16px] leading-relaxed text-ink-soft">
-              {settings.shopName} began the way most good things do — at home, with one Diwali box too many. What started as festive trays for neighbours in {settings.city} is now a small studio where hampers are sourced, styled and tied by hand: pahadi honey and jams from village co-operatives, mithai from trusted local halwais, candles poured in small batches.
+              {settings.shopName} is a small gifting studio in {settings.city}, where available hampers are styled and ribbon-tied with the recipient and occasion in mind. Explore each product’s listed contents, variants and add-ons before placing an order.
             </p>
           </Reveal>
           <Reveal delay={0.3}>
             <div className="mt-8 grid gap-5 sm:grid-cols-3">
               {[
-                { t: "Sourced local", d: "Pahadi makers, halwais & co-ops first", bg: "bg-mint" },
-                { t: "Tied by hand", d: "No factory lines, only our table", bg: "bg-blush" },
-                { t: "Sent with care", d: "Double-boxed, note included", bg: "bg-lav" },
+                { t: "Clear choices", d: "Contents and options are listed on each hamper", bg: "bg-mint" },
+                { t: "Tied by hand", d: "A small studio approach to every available hamper", bg: "bg-blush" },
+                { t: "Tracked orders", d: "Account orders stay visible after checkout", bg: "bg-lav" },
               ].map((v) => (
                 <div key={v.t} className={`rounded-3xl ${v.bg} p-5`}>
-                  <p className="font-display text-lg font-semibold">{v.t}</p>
+                  <p className="font-display text-lg font-medium">{v.t}</p>
                   <p className="mt-1 text-[13px] leading-snug text-ink/70">{v.d}</p>
                 </div>
               ))}
@@ -197,13 +192,13 @@ export default async function Home() {
             {[
               { n: "01", t: "Pick or design", d: "Choose a hamper, or WhatsApp us a budget & occasion and we'll sketch one for you." },
               { n: "02", t: "We tie it by hand", d: "Sourced, styled and ribbon-tied at our home studio — with your note, in your words." },
-              { n: "03", t: "Pay your way", d: "COD across our delivery zone, UPI anywhere. GST invoices for corporate orders." },
-              { n: "04", t: "The unboxing", d: "Double-boxed, petal-packed, delivered same-day in Kashipur & tracked everywhere else." },
+              { n: "03", t: "Choose your payment", d: "Eligible local orders can use COD; UPI is available at checkout. A secure gateway appears when configured." },
+              { n: "04", t: "The delivery", d: "We confirm the delivery plan from the recipient pincode and keep account orders visible in private tracking." },
             ].map((s, i) => (
               <Reveal key={s.n} delay={i * 0.1}>
                 <div className="group h-full rounded-[28px] border border-cream/15 bg-cream/5 p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-blush-deep/60 hover:bg-cream/10">
-                  <p className="font-display text-5xl font-semibold text-stroke transition-colors duration-500 group-hover:text-blush-deep group-hover:[-webkit-text-stroke:0px]">{s.n}</p>
-                  <p className="mt-5 font-display text-xl font-semibold">{s.t}</p>
+                  <p className="font-display text-5xl font-medium text-stroke transition-colors duration-500 group-hover:text-blush-deep group-hover:[-webkit-text-stroke:0px]">{s.n}</p>
+                  <p className="mt-5 font-display text-xl font-medium">{s.t}</p>
                   <p className="mt-2 text-sm leading-relaxed text-cream/65">{s.d}</p>
                 </div>
               </Reveal>
@@ -212,29 +207,24 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ───────────────── TESTIMONIALS ───────────────── */}
+      {/* ───────────────── ORDER CONFIDENCE ───────────────── */}
       <section className="wrap py-14 md:py-24">
         <Reveal className="text-center">
-          <p className="eyebrow justify-center">Gift-givers, unfiltered</p>
-          <h2 className="font-display mt-4 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">Notes left on our table.</h2>
+          <p className="eyebrow justify-center">Thoughtful, and accountable</p>
+          <h2 className="font-display mt-4 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">A real order, not a hopeful DM.</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-ink-soft">Every online order is saved to the customer account that placed it. Stock, price, delivery zone and payment status are checked before the studio starts work.</p>
         </Reveal>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
-            { q: "Ordered 40 wedding return-trays at 11pm in a panic. Delivered in six days, each one photographed by our guests before the thaali even came. Unreal care.", n: "Meera & Aditya", c: "Haldwani · wedding order", bg: "bg-blush" },
-            { q: "We send The Desk Edit to our whole team every Diwali. GST invoice, names on tags, zero follow-ups needed. Our go-to for three years running.", n: "Rohit Bhandari", c: "People-ops, Noida · corporate", bg: "bg-mint" },
-            { q: "Amma got the Pahadi Virasat box and called me crying happy — the honey jar reminded her of her maika village. That's not gifting, that's time travel.", n: "Naina Rawat", c: "Dehradun · family", bg: "bg-lav" },
-          ].map((t, i) => (
-            <Reveal key={t.n} delay={i * 0.1}>
-              <figure className={`flex h-full flex-col justify-between rounded-[28px] ${t.bg} p-8`}>
-                <div>
-                  <div className="flex gap-1 text-rose"><Stars /></div>
-                  <blockquote className="mt-4 font-display text-[19px] leading-snug">“{t.q}”</blockquote>
-                </div>
-                <figcaption className="mt-6">
-                  <p className="font-bold">{t.n}</p>
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-ink/55">{t.c}</p>
-                </figcaption>
-              </figure>
+            { t: "Private order history", d: "Sign in to see the orders placed from your account and return to private tracking whenever you need it.", bg: "bg-blush" },
+            { t: "Live checkout checks", d: "The final checkout validates the current product, selected options, stock, coupon and delivery price on the server.", bg: "bg-mint" },
+            { t: "Human help for custom work", d: "For bulk, wedding or fully personalised gifting, speak to the studio first so scope and timing are confirmed clearly.", bg: "bg-lav" },
+          ].map((item, i) => (
+            <Reveal key={item.t} delay={i * 0.1}>
+              <div className={`h-full rounded-[28px] ${item.bg} p-8`}>
+                <p className="font-display text-[21px] font-medium leading-snug">{item.t}</p>
+                <p className="mt-3 text-[14px] leading-relaxed text-ink/75">{item.d}</p>
+              </div>
             </Reveal>
           ))}
         </div>
@@ -249,10 +239,10 @@ export default async function Home() {
               <div>
                 <p className="eyebrow">For teams & bulk gifting</p>
                 <h2 className="font-display mt-4 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">
-                  25 or 2,500 hampers — <span className="italic text-rose-deep">one very calm point of contact.</span>
+                  From a thoughtful team thank-you to a coordinated bulk order — <span className="italic text-rose-deep">one calm point of contact.</span>
                 </h2>
                 <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-ink/70">
-                  Name-calligraphy tags, brand cards, GST invoicing and pan-India dispatch. Use code <b>BULK25</b> for 8% off orders above ₹20,000.
+                  Ask us about names on tags, brand cards, delivery planning and any documentation your organisation needs before we confirm the order. Use code <b>BULK25</b> for 8% off eligible orders above ₹20,000.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-4">
                   <Link href="/shop?occasion=Corporate" className="btn-primary w-full justify-center sm:w-auto">See corporate hampers</Link>
@@ -262,7 +252,7 @@ export default async function Home() {
               <div className="relative hidden md:block">
                 <img src="/img/corporate.jpg" alt="Corporate desk hamper" className="ml-auto aspect-[4/4.2] w-[85%] rounded-[28px] object-cover shadow-[0_30px_70px_-30px_rgba(62,54,44,0.5)]" loading="lazy" />
                 <div className="absolute -left-2 bottom-8 -rotate-3 rounded-2xl bg-cream px-5 py-3 shadow-lg">
-                  <p className="font-script text-2xl text-ink">GST invoice included</p>
+                  <p className="font-script text-2xl text-ink">planned with care</p>
                 </div>
               </div>
             </div>
@@ -277,7 +267,7 @@ export default async function Home() {
             <p className="eyebrow">Good to know</p>
             <h2 className="font-display mt-4 text-[30px] font-medium leading-[1.1] sm:text-4xl md:text-5xl">Questions, answered softly.</h2>
             <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-ink-soft">
-              Anything else? WhatsApp us on {settings.phone} — a human (usually with ribbon on their sleeves) replies within the hour.
+              Need a custom hamper, a bulk quote or help before checkout? WhatsApp us on {settings.phone}; the studio will reply as soon as it can.
             </p>
           </Reveal>
           <Reveal delay={0.15}>
@@ -289,14 +279,3 @@ export default async function Home() {
   );
 }
 
-function Stars() {
-  return (
-    <span className="inline-flex gap-0.5 text-rose" aria-label="Rated 4.9 out of 5">
-      {[...Array(5)].map((_, i) => (
-        <svg key={i} width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2.5l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8L12 2.5z" />
-        </svg>
-      ))}
-    </span>
-  );
-}

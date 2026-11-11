@@ -24,11 +24,11 @@ export default function AppBanner() {
   return (
     <div className="relative z-30 border-b border-line bg-blush px-4 py-2.5 md:hidden">
       <div className="flex items-center gap-3">
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-rose font-display text-[17px] font-semibold text-cream">T<span className="text-blush">.</span></span>
-        <p className="flex-1 text-[12px] font-bold leading-snug">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-rose font-display text-[17px] font-medium text-cream">T<span className="text-blush">.</span></span>
+        <p className="flex-1 text-[12px] font-medium leading-snug">
           Get the Taj Gifts app — one tap, faster, free.
         </p>
-        <Link href="/download" className="shrink-0 rounded-full bg-ink px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-cream">
+        <Link href="/download" className="shrink-0 rounded-full bg-ink px-4 py-2 text-[10px] font-medium uppercase tracking-[0.14em] text-cream">
           View
         </Link>
         <button

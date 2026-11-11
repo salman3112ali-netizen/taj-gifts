@@ -3,14 +3,12 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { admin } from "@/lib/supabase";
 import { getSettings, inr, orderCode, dateTimeFmt, waLink } from "@/lib/store";
-import { hamperArtUrl } from "@/lib/hamper-art";
-import { previewExists, previewPublicUrl } from "@/lib/hamper-art-server";
-import HamperArt from "@/components/hamper-art";
 import OrderPay from "@/components/order-pay";
 import LiveRefresh from "@/components/live-refresh";
 import type { Order, OrderItem } from "@/lib/types";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { customerVisibleOtp, validTrackingToken } from "@/lib/fulfilment";
+import { ownsOrClaimsLegacyOrder } from "@/lib/order-access";
 
 export const metadata: Metadata = { title: "Your order" };
 export const dynamic = "force-dynamic";
@@ -30,7 +28,8 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   if (!order) notFound();
   const raw = order as Order & { tracking_token_hash?: string | null; user_id?: string | null };
   const account = await getCurrentUser().catch(() => null);
-  const allowed = !raw.tracking_token_hash || validTrackingToken(raw.tracking_token_hash, query.t) || (!!account && account.id === raw.user_id);
+  const accountAllowed = await ownsOrClaimsLegacyOrder(raw, account);
+  const allowed = validTrackingToken(raw.tracking_token_hash, query.t) || accountAllowed;
   if (!allowed) notFound();
   const [visibleOtp, fulfilment] = await Promise.all([
     customerVisibleOtp(id),
@@ -40,17 +39,6 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   const its = (items ?? []) as OrderItem[];
   const stepIdx = o.status === "cancelled" ? -1 : STATUS_STEPS.indexOf(o.status);
 
-  // artist's preview: deterministic AI render of exactly this hamper
-  const slugs = [...new Set(its.map((i) => i.slug))];
-  const { data: prods } = await admin().from("products").select("slug,contents,occasion").in("slug", slugs);
-  let artUrl = hamperArtUrl({
-    names: its.map((i) => i.name),
-    contents: (prods ?? []).flatMap((p: { contents: string[] | null }) => p.contents ?? []),
-    occasion: its[0]?.occasion ?? undefined,
-    seed: o.id,
-  });
-  if (await previewExists(o.id)) artUrl = previewPublicUrl(o.id);
-
   return (
     <section className="wrap max-w-[860px] pb-24 pt-12">
       <LiveRefresh />
@@ -59,9 +47,9 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
           <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-mint">
             <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#3e362c" strokeWidth="2.4"><path d="M4 12.5 9.5 18 20 6.5" /></svg>
           </div>
-          <h1 className="font-display mt-6 text-5xl font-medium leading-tight">Order tied with love.</h1>
+          <h1 className="font-display mt-6 text-5xl font-medium leading-tight">Order received.</h1>
           <p className="mx-auto mt-3 max-w-md text-[15px] text-ink-soft">
-            Thank you, {o.customer_name.split(" ")[0]}! Your hamper is in our tying queue. Your private tracking link is saved here; the studio will keep it updated as the order moves.
+            Thank you, {o.customer_name.split(" ")[0]}! Your order is saved in your private account area. The studio will update its status as it is confirmed and prepared.
           </p>
         </div>
       )}
@@ -72,7 +60,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             <p className="eyebrow">Order {orderCode(o.id)}</p>
             <p className="mt-2 text-sm text-ink-soft">Placed {dateTimeFmt(o.created_at)} · {o.payment_method} · payment {o.payment_status}</p>
           </div>
-          <p className="font-display text-3xl font-semibold">{inr(o.total)}</p>
+          <p className="font-display text-3xl font-medium">{inr(o.total)}</p>
         </div>
 
         {o.status !== "cancelled" ? (
@@ -80,17 +68,17 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             {STATUS_STEPS.map((s, i) => (
               <div key={s} className="flex flex-1 items-center last:flex-none">
                 <div className="flex flex-col items-center gap-2">
-                  <span className={"grid h-9 w-9 place-items-center rounded-full border-2 text-[11px] font-black uppercase transition " + (i <= stepIdx ? "border-rose bg-rose text-white" : "border-ink/15 bg-cream text-ink-soft")}>
+                  <span className={"grid h-9 w-9 place-items-center rounded-full border-2 text-[11px] font-medium uppercase transition " + (i <= stepIdx ? "border-rose bg-rose text-white" : "border-ink/15 bg-cream text-ink-soft")}>
                     {i < stepIdx ? "✓" : i + 1}
                   </span>
-                  <span className={"text-[10px] font-black uppercase tracking-wider " + (i <= stepIdx ? "text-rose" : "text-ink-soft/60")}>{STEP_LABEL[s] ?? s}</span>
+                  <span className={"text-[10px] font-medium uppercase tracking-wider " + (i <= stepIdx ? "text-rose" : "text-ink-soft/60")}>{STEP_LABEL[s] ?? s}</span>
                 </div>
                 {i < STATUS_STEPS.length - 1 && <div className={"mx-2 mb-5 h-0.5 flex-1 rounded " + (i < stepIdx ? "bg-rose" : "bg-ink/10")} />}
               </div>
             ))}
           </div>
         ) : (
-          <p className="mt-8 rounded-xl bg-blush px-5 py-3 text-sm font-bold text-rose-deep">This order was cancelled. Write to us if that's a mistake!</p>
+          <p className="mt-8 rounded-xl bg-blush px-5 py-3 text-sm font-medium text-rose-deep">This order was cancelled. Write to us if that's a mistake!</p>
         )}
 
         <ul className="mt-9 divide-y divide-line border-y border-line">
@@ -98,10 +86,10 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             <li key={it.id} className="flex items-center gap-4 py-4">
               <div className="h-16 w-14 shrink-0 overflow-hidden rounded-lg bg-cream-deep"><img src={it.image || "/img/hero.jpg"} alt={it.name} className="h-full w-full object-cover" /></div>
               <div className="flex-1">
-                <p className="font-display text-[16px] font-semibold">{it.name}</p>
+                <p className="font-display text-[16px] font-medium">{it.name}</p>
                 <p className="text-[12px] text-ink-soft">{it.variant ?? "As shown"}{it.addons?.length ? ` · +${it.addons.map((a) => a.label).join(", +")}` : ""} · qty {it.qty}</p>
               </div>
-              <p className="font-bold">{inr(it.line_total)}</p>
+              <p className="font-medium">{inr(it.line_total)}</p>
             </li>
           ))}
         </ul>
@@ -112,23 +100,23 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             <div className="flex justify-between"><span className="text-ink-soft">Subtotal</span><b>{inr(o.subtotal)}</b></div>
             {o.discount > 0 && <div className="flex justify-between text-mint-deep"><span>Coupon {o.coupon}</span><b>−{inr(o.discount)}</b></div>}
             <div className="flex justify-between"><span className="text-ink-soft">Delivery</span><b>{o.delivery_charge === 0 ? "FREE" : inr(o.delivery_charge)}</b></div>
-            <div className="flex justify-between border-t border-line pt-2 font-display text-xl font-semibold"><span>Total</span><span>{inr(o.total)}</span></div>
+            <div className="flex justify-between border-t border-line pt-2 font-display text-xl font-medium"><span>Total</span><span>{inr(o.total)}</span></div>
           </div>
           <div className="text-sm">
             <p className="label">Delivering to</p>
-            <p className="font-bold">{o.customer_name} · {o.customer_phone}</p>
+            <p className="font-medium">{o.customer_name} · {o.customer_phone}</p>
             <p className="mt-1 text-ink-soft">{o.customer_address}{o.customer_landmark ? `, ${o.customer_landmark}` : ""}, {o.customer_city} — {o.customer_pincode}</p>
             {o.gift_note && <p className="mt-3 rounded-xl bg-butter/70 px-4 py-3 font-script text-lg leading-snug">“{o.gift_note}”{o.gift_sender_name ? ` — ${o.gift_sender_name}` : ""}</p>}
           </div>
         </div>
 
-        {o.payment_method === "UPI" && o.payment_status !== "paid" && o.status !== "cancelled" && (
+        {o.payment_method === "UPI" && o.payment_status === "pending" && o.status !== "cancelled" && (
           <OrderPay orderId={o.id} total={o.total} upiId={settings.upiId} payeeName={settings.payeeName} code={orderCode(o.id)} />
         )}
 
         {visibleOtp && (
           <div className="mt-7 rounded-2xl bg-butter/70 p-5 text-sm">
-            <p className="font-bold">Your delivery code: <span className="ml-1 rounded-lg bg-white px-3 py-1 font-mono text-xl font-black tracking-[0.22em]">{visibleOtp.code}</span></p>
+            <p className="font-medium">Your delivery code: <span className="ml-1 rounded-lg bg-white px-3 py-1 font-mono text-xl font-medium tracking-[0.22em]">{visibleOtp.code}</span></p>
             <p className="mt-1 text-[12px] leading-relaxed text-ink-soft">
               Share this one-time 6-digit code only when your Taj hamper is safely in your hands. It expires at {new Date(visibleOtp.expiresAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.
             </p>
@@ -141,30 +129,23 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
           <p className="mt-4 rounded-xl bg-lav/60 px-4 py-3 text-[13px] text-ink-soft">Delivery note: {fulfilment.data.latest_attempt_note}</p>
         )}
 
-        <div className="mt-9 grid items-center gap-8 rounded-[28px] bg-cream-deep/60 p-6 md:grid-cols-[240px_1fr]">
-          <HamperArt src={artUrl} fallback={its[0]?.image || "/img/hero.jpg"} alt={`Artist's preview of your ${its.map((i) => i.name).join(" + ")} hamper`} />
+        <div className="mt-9 grid items-center gap-8 rounded-[28px] bg-cream-deep/60 p-6 md:grid-cols-[180px_1fr]">
+          <div className="aspect-[4/5] overflow-hidden rounded-[22px] bg-white">
+            <img src={its[0]?.image || "/img/hero.jpg"} alt={its[0]?.name || "Taj Gifts hamper"} className="h-full w-full object-cover" />
+          </div>
           <div>
-            <p className="eyebrow">While you wait</p>
-            <h2 className="font-display mt-2 text-2xl font-semibold leading-snug">Here's our artist's sketch of the hamper we'll tie for you.</h2>
+            <p className="eyebrow">Need help with this order?</p>
+            <h2 className="font-display mt-2 text-2xl font-medium leading-snug">Your order details are saved here.</h2>
             <p className="mt-3 text-[14px] leading-relaxed text-ink-soft">
-              Auto-painted from your exact contents list — the real one is tied by hand in {settings.city}, so expect it even lovelier (and smelling of mithai).
+              The image is a product reference from your order, not a photograph of the final packed hamper. For a delivery question or an allowed change, contact the studio with your order code.
             </p>
-            <div className="mt-5 flex items-start gap-3 rounded-2xl bg-mint/70 p-4">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/80 text-[17px]">🤖</span>
-              <div>
-                <p className="text-[13px] font-bold">Studio already notified — automatically.</p>
-                <p className="mt-0.5 text-[12px] leading-relaxed text-ink/70">
-                  The moment you placed this order, our bot sent the full tying brief (items, note, address, totals) plus this sketch straight to the studio. Nothing for you to forward.
-                </p>
-              </div>
-            </div>
             <a
               className="btn-ghost mt-4"
-              href={waLink(settings.whatsapp, `Hi! About order ${orderCode(o.id)} — I'd like a small change: `)}
+              href={waLink(settings.whatsapp, `Hi! About order ${orderCode(o.id)} — I'd like help with: `)}
               target="_blank"
               rel="noreferrer"
             >
-              Add a personal note (optional)
+              Contact the studio on WhatsApp
             </a>
           </div>
         </div>

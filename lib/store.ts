@@ -1,4 +1,4 @@
-import type { Product, Settings } from "./types";
+import type { Coupon, Product, Settings } from "./types";
 import { admin } from "./supabase";
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -6,7 +6,7 @@ export const DEFAULT_SETTINGS: Settings = {
   tagline: "Hand-tied hampers, made at home in Kashipur",
   announcement: "Handmade in Kashipur · Free delivery above ₹2,499",
   shopOpen: true,
-  email: "hello@tajgifts.in",
+  email: "tajgifts.orders@gmail.com",
   phone: "+91 76688 19833",
   whatsapp: "917668819833",
   address: "Pakiza Colony, Kashipur, Uttarakhand 244713, India",
@@ -31,8 +31,13 @@ export async function getSettings(): Promise<Settings> {
     .maybeSingle();
   const raw = (data?.data ?? {}) as Partial<Settings>;
   const merged = { ...DEFAULT_SETTINGS, ...raw } as Settings;
-  // never let the admin hash (or any secret) reach a browser payload
-  delete (merged as Record<string, unknown>).adminPasswordHash;
+  // This function returns storefront-safe settings, and its result is serialised
+  // into every page (CartProvider) and into /api/products. Strip every secret
+  // column explicitly: an admin password hash, the integration-key vault (SMTP
+  // password, Telegram/Meta tokens, webhook URLs, Razorpay secret) and owner
+  // broadcast drafts must never reach a browser payload.
+  const secretKeys = ["adminPasswordHash", "apis", "appAnnouncements"] as const;
+  for (const key of secretKeys) delete (merged as Record<string, unknown>)[key];
   return merged;
 }
 
@@ -48,15 +53,15 @@ export async function getProduct(slug: string): Promise<Product | null> {
   return (data as Product) ?? null;
 }
 
-export const inr = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
+/** Storefront promo copy must come from the live coupon record, never a stale hard-coded offer. */
+export async function getActiveCoupons(): Promise<Coupon[]> {
+  const { data } = await admin().from("coupons").select("*").eq("active", true).order("created_at", { ascending: true });
+  return (data ?? []) as Coupon[];
+}
 
-export const orderCode = (id: string) => "TG-" + id.replace(/-/g, "").slice(0, 6).toUpperCase();
-
-export const dateFmt = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-
-export const dateTimeFmt = (iso: string) =>
-  new Date(iso).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+// Display helpers live in lib/format.ts so client components never import this
+// server-only module. Re-exported here for existing server-side callers.
+export { inr, orderCode, dateFmt, dateTimeFmt, waLink } from "./format";
 
 export function deliveryFor(settings: Settings, pincode: string, subtotalAfterDiscount: number) {
   const local = settings.localPincodes.includes(pincode);
@@ -70,6 +75,3 @@ export function couponDiscount(type: "flat" | "percent", value: number, subtotal
   return Math.min(d, subtotal);
 }
 
-export function waLink(whatsapp: string, text: string) {
-  return `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`;
-}

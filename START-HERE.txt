@@ -1,0 +1,42 @@
+TAJ GIFTS - READ THIS FIRST
+===========================
+
+WHAT IS IN THIS FOLDER
+  The full website source. The git repository (the hidden .git folder)
+  is already inside it and already committed - do not delete it.
+
+DEPLOY TO THE LIVE SITE  (normal way, 3 steps)
+  1. Right-click the zip, choose "Extract All", pick a folder.
+  2. Open that folder and double-click   DEPLOY.bat
+  3. Wait about 2 minutes. Netlify rebuilds automatically from GitHub.
+
+  Verify afterwards:  https://tajgifts.netlify.app/api/app/auth
+  It must return:     {"ok":true,"service":"Taj Gifts native account API"}
+  A 404 means the old build is still live.
+
+  If it asks for a password: GitHub does not accept your account
+  password. Create a Personal Access Token and paste that instead.
+  github.com - Settings - Developer settings - Personal access tokens
+  - Tokens (classic) - Generate new token - tick "repo".
+
+PREVIEW ON THIS PC
+  Double-click   RUN-LOCALLY.bat
+  Needs Node.js 22. It will create .env.local for you to paste your
+  Supabase keys into (the live site does not use that file).
+
+COMMON MISTAKES
+  - Do not run git add / commit / push by hand in a different folder.
+    DEPLOY.bat already does it from the right place.
+  - Never put a backslash before a closing quote in Windows paths,
+    e.g. "F:\folder\" breaks the command. Use "F:\folder".
+  - Do not edit .env.local in Netlify. Keys belong in
+    Netlify - Site configuration - Environment variables.
+
+WHAT CHANGED IN THIS RELEASE
+  - Admin database functions are no longer callable by anonymous visitors.
+  - Gift codes are no longer publicly listable.
+  - Rate limits now survive server restarts.
+  - Customers can cancel their own unpaid order.
+  - "Same-day" delivery promise removed from product data.
+  - Contact email corrected to tajgifts.orders@gmail.com.
+  - Full details: SECURITY-AUDIT.md

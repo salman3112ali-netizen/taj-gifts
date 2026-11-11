@@ -35,6 +35,17 @@ export async function POST(req: NextRequest) {
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
   const path = `p-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext || "jpg"}`;
   const buf = Buffer.from(await file.arrayBuffer());
+  // A browser-declared MIME type is a hint, not proof. Confirm the actual file
+  // signature so the public bucket can never be used to host an HTML/SVG page.
+  const sig = buf.subarray(0, 12);
+  const isJpeg = sig[0] === 0xff && sig[1] === 0xd8 && sig[2] === 0xff;
+  const isPng = sig[0] === 0x89 && sig.toString("latin1", 1, 4) === "PNG";
+  const isGif = sig.toString("latin1", 0, 3) === "GIF";
+  const isWebp = sig.toString("latin1", 0, 4) === "RIFF" && sig.toString("latin1", 8, 12) === "WEBP";
+  const isAvif = sig.toString("latin1", 4, 8) === "ftyp";
+  if (!isJpeg && !isPng && !isGif && !isWebp && !isAvif) {
+    return NextResponse.json({ ok: false, error: "That file is not a real JPEG, PNG, WebP, AVIF or GIF image." }, { status: 400 });
+  }
   const { error } = await sb.storage.from("products").upload(path, buf, {
     contentType: file.type,
     cacheControl: "31536000",

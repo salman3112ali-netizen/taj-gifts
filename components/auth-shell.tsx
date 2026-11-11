@@ -7,9 +7,11 @@ import { browserSupabase } from "@/lib/supabase/browser";
 export function AuthShell({ title, script, children }: { title: string; script: string; children: ReactNode }) {
   const google = async () => {
     const sb = browserSupabase();
+    const requested = new URLSearchParams(window.location.search).get("next") || "/account";
+    const next = requested.startsWith("/") && !requested.startsWith("//") ? requested : "/account";
     const { error } = await sb.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=/account` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
     });
     if (error) {
       const el = document.getElementById("google-err");
@@ -35,13 +37,13 @@ export function AuthShell({ title, script, children }: { title: string; script: 
       </Reveal>
       <Reveal delay={0.1} y={26}>
         <div className="mx-auto w-full max-w-md rounded-[32px] border border-line bg-white/75 p-9 shadow-[0_30px_80px_-40px_rgba(62,54,44,0.35)] backdrop-blur">
-          <Link href="/" className="font-display text-2xl font-semibold">Taj Gifts<span className="text-rose">.</span></Link>
+          <Link href="/" className="font-display text-2xl font-medium">Taj Gifts<span className="text-rose">.</span></Link>
           <h1 className="font-display mt-6 text-4xl font-medium leading-tight">{title}</h1>
           <p className="mt-1 font-script text-2xl text-rose">{script}</p>
           <div className="mt-7">{children}</div>
           <button
             onClick={google}
-            className="mt-5 flex w-full items-center justify-center gap-3 rounded-full border border-ink/15 bg-white px-6 py-3.5 text-[13px] font-bold tracking-wide transition hover:border-ink/40 hover:shadow-md"
+            className="mt-5 flex w-full items-center justify-center gap-3 rounded-full border border-ink/15 bg-white px-6 py-3.5 text-[13px] font-medium tracking-wide transition hover:border-ink/40 hover:shadow-md"
           >
             <svg width="17" height="17" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M23.5 12.3c0-.9-.1-1.5-.3-2.2H12v4.1h6.5c-.1 1.1-.8 2.7-2.4 3.8l3.8 2.9c2.3-2.1 3.6-5.1 3.6-8.6Z" />
@@ -51,7 +53,7 @@ export function AuthShell({ title, script, children }: { title: string; script: 
             </svg>
             Continue with Google
           </button>
-          <p id="google-err" className="mt-3 min-h-[1em] text-center text-[12px] font-semibold leading-snug text-rose-deep" />
+          <p id="google-err" className="mt-3 min-h-[1em] text-center text-[12px] font-medium leading-snug text-rose-deep" />
         </div>
       </Reveal>
     </section>

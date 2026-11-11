@@ -45,7 +45,7 @@ export default function SearchScreen({ products }: { products: Product[] }) {
         <div className="mt-6">
           {recent.length > 0 && (
             <>
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-ink-soft">Recent</p>
+              <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-ink-soft">Recent</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {recent.map((r) => (
                   <button key={r} onClick={() => setQ(r)} className="chip">{r}</button>
@@ -53,7 +53,7 @@ export default function SearchScreen({ products }: { products: Product[] }) {
               </div>
             </>
           )}
-          <p className="mt-6 text-[11px] font-black uppercase tracking-[0.18em] text-ink-soft">Popular</p>
+          <p className="mt-6 text-[11px] font-medium uppercase tracking-[0.18em] text-ink-soft">Popular</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {POPULAR.map((p) => (
               <button key={p} onClick={() => setQ(p)} className="chip">{p}</button>
@@ -64,7 +64,7 @@ export default function SearchScreen({ products }: { products: Product[] }) {
 
       {needle && (
         <div className="mt-5">
-          <p className="text-[12px] font-bold text-ink-soft">{results.length} result{results.length === 1 ? "" : "s"} for “{q}”</p>
+          <p className="text-[12px] font-medium text-ink-soft">{results.length} result{results.length === 1 ? "" : "s"} for “{q}”</p>
           <div className="mt-3 grid grid-cols-2 gap-x-3.5 gap-y-6">
             {results.map((p) => <AppProductCard key={p.id} p={p} />)}
           </div>

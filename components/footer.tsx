@@ -11,7 +11,7 @@ export default function Footer({ settings }: { settings: Settings }) {
         <Newsletter />
         <div className="mt-14 grid gap-10 border-t border-cream/15 pt-12 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
-            <p className="font-display text-3xl font-semibold">
+            <p className="font-display text-3xl font-medium">
               {settings.shopName}
               <span className="text-blush-deep">.</span>
             </p>
@@ -21,17 +21,19 @@ export default function Footer({ settings }: { settings: Settings }) {
             <p className="mt-5 font-script text-2xl text-blush-deep">made with love, from our home to yours</p>
           </div>
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cream/50">Shop</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-cream/50">Shop</p>
             <ul className="mt-4 space-y-2.5 text-sm text-cream/80">
               <li><Link className="transition hover:text-blush-deep" href="/shop">All hampers</Link></li>
               <li><Link className="transition hover:text-blush-deep" href="/shop?occasion=Festive">Festive</Link></li>
               <li><Link className="transition hover:text-blush-deep" href="/shop?occasion=Wedding">Wedding</Link></li>
               <li><Link className="transition hover:text-blush-deep" href="/shop?occasion=Corporate">Corporate & bulk</Link></li>
               <li><Link className="transition hover:text-blush-deep" href="/shop?occasion=Uttarakhand">Pahadi special</Link></li>
+              <li><Link className="transition hover:text-blush-deep" href="/gift-hampers-kashipur">Gift hampers in Kashipur</Link></li>
+              <li><Link className="transition hover:text-blush-deep" href="/gift-hampers-uttarakhand">Gift hampers from Uttarakhand</Link></li>
             </ul>
           </div>
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cream/50">Help</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-cream/50">Help</p>
             <ul className="mt-4 space-y-2.5 text-sm text-cream/80">
               <li><Link className="transition hover:text-blush-deep" href="/about">Our story</Link></li>
               <li><Link className="transition hover:text-blush-deep" href="/contact">Contact & custom hampers</Link></li>
@@ -44,14 +46,16 @@ export default function Footer({ settings }: { settings: Settings }) {
             </ul>
           </div>
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-cream/50">Visit / talk</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-cream/50">Visit / talk</p>
             <ul className="mt-4 space-y-2.5 text-sm text-cream/80">
               <li>{settings.address}</li>
-              <li>{settings.city}, {settings.state} — {settings.pincode}</li>
+              {!settings.address.toLowerCase().includes(settings.city.toLowerCase()) && (
+                <li>{settings.city}, {settings.state} — {settings.pincode}</li>
+              )}
               <li><a className="transition hover:text-blush-deep" href={`tel:${settings.phone}`}>{settings.phone}</a></li>
               <li><a className="transition hover:text-blush-deep" href={`mailto:${settings.email}`}>{settings.email}</a></li>
               <li>
-                <a className="inline-flex items-center gap-2 rounded-full bg-mint px-4 py-2 text-[11px] font-black uppercase tracking-wider text-ink transition hover:bg-blush" href={`https://wa.me/${settings.whatsapp}`} target="_blank" rel="noreferrer">
+                <a className="inline-flex items-center gap-2 rounded-full bg-mint px-4 py-2 text-[11px] font-medium uppercase tracking-wider text-ink transition hover:bg-blush" href={`https://wa.me/${settings.whatsapp}`} target="_blank" rel="noreferrer">
                   WhatsApp · {settings.phone}
                 </a>
               </li>

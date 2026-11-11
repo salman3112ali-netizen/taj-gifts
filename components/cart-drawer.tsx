@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useCart, inr, deliveryFor } from "@/lib/cart";
 import { itemKey, unitPrice } from "@/lib/types";
+import { useUser } from "@/lib/use-user";
 
 export default function CartDrawer() {
   const { drawer, setDrawer, items, setQty, remove, subtotal, coupon, discount, applyCoupon, clearCoupon, settings } = useCart();
+  const { user } = useUser();
   const [code, setCode] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -34,7 +36,7 @@ export default function CartDrawer() {
             transition={{ type: "spring", damping: 32, stiffness: 300 }}
           >
             <div className="flex items-center justify-between border-b border-line px-6 py-5">
-              <h2 className="font-display text-2xl font-semibold">
+              <h2 className="font-display text-2xl font-medium">
                 Your basket <span className="font-script text-lg text-rose">({items.length} {items.length === 1 ? "hamper" : "hampers"})</span>
               </h2>
               <button onClick={() => setDrawer(false)} aria-label="Close cart" className="rounded-full border border-ink/15 p-2 transition hover:bg-ink hover:text-cream">
@@ -68,7 +70,7 @@ export default function CartDrawer() {
                         <div className="flex-1">
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <p className="font-display text-[16px] font-semibold leading-tight">{i.name}</p>
+                              <p className="font-display text-[16px] font-medium leading-tight">{i.name}</p>
                               <p className="mt-0.5 text-[11px] uppercase tracking-[0.14em] text-ink-soft">
                                 {i.occasion}
                                 {i.variant ? ` · ${i.variant}` : ""}
@@ -84,10 +86,10 @@ export default function CartDrawer() {
                           <div className="mt-2.5 flex items-center justify-between">
                             <div className="flex items-center gap-1 rounded-full border border-ink/15 bg-white px-1.5 py-1">
                               <button onClick={() => setQty(key, i.qty - 1)} className="px-2.5 py-1.5 text-lg leading-none text-ink-soft hover:text-rose" aria-label="Decrease">−</button>
-                              <span className="min-w-5 text-center text-sm font-bold">{i.qty}</span>
+                              <span className="min-w-5 text-center text-sm font-medium">{i.qty}</span>
                               <button onClick={() => setQty(key, i.qty + 1)} className="px-2.5 py-1.5 text-lg leading-none text-ink-soft hover:text-rose" aria-label="Increase">+</button>
                             </div>
-                            <p className="font-display text-[16px] font-semibold">{inr(unitPrice(i) * i.qty)}</p>
+                            <p className="font-display text-[16px] font-medium">{inr(unitPrice(i) * i.qty)}</p>
                           </div>
                         </div>
                       </li>
@@ -101,10 +103,10 @@ export default function CartDrawer() {
               <div className="border-t border-line bg-white/60 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5 sm:px-6">
                 {coupon ? (
                   <div className="mb-3 flex items-center justify-between rounded-xl bg-mint px-4 py-2.5 text-sm">
-                    <span className="font-bold">
+                    <span className="font-medium">
                       {coupon.code} <span className="font-normal text-ink-soft">— {coupon.label}</span>
                     </span>
-                    <button onClick={clearCoupon} className="text-xs font-bold uppercase tracking-wider text-rose hover:underline">Remove</button>
+                    <button onClick={clearCoupon} className="text-xs font-medium uppercase tracking-wider text-rose hover:underline">Remove</button>
                   </div>
                 ) : (
                   <form
@@ -118,28 +120,28 @@ export default function CartDrawer() {
                     }}
                   >
                     <input className="input py-2.5 text-sm uppercase tracking-wider" placeholder="Gift code (try FIRSTGIFT)" value={code} onChange={(e) => setCode(e.target.value)} />
-                    <button className="shrink-0 rounded-xl bg-ink px-5 text-[11px] font-black uppercase tracking-wider text-cream transition hover:bg-rose-deep" disabled={busy}>
+                    <button className="shrink-0 rounded-xl bg-ink px-5 text-[11px] font-medium uppercase tracking-wider text-cream transition hover:bg-rose-deep" disabled={busy}>
                       {busy ? "…" : "Apply"}
                     </button>
                   </form>
                 )}
-                {err && <p className="mb-2 text-xs font-semibold text-rose-deep">{err}</p>}
+                {err && <p className="mb-2 text-xs font-medium text-rose-deep">{err}</p>}
 
                 <div className="space-y-1.5 text-sm">
-                  <div className="flex justify-between"><span className="text-ink-soft">Subtotal</span><span className="font-bold">{inr(subtotal)}</span></div>
-                  {discount > 0 && <div className="flex justify-between text-mint-deep"><span>Discount</span><span className="font-bold">−{inr(discount)}</span></div>}
+                  <div className="flex justify-between"><span className="text-ink-soft">Subtotal</span><span className="font-medium">{inr(subtotal)}</span></div>
+                  {discount > 0 && <div className="flex justify-between text-mint-deep"><span>Discount</span><span className="font-medium">−{inr(discount)}</span></div>}
                   <div className="flex justify-between text-ink-soft">
                     <span>Delivery</span>
-                    <span className="font-bold text-ink">{freeShip ? "FREE" : `from ${inr(charge === 0 ? settings.localDeliveryCharge : charge)}${local ? "" : "*"}`}</span>
+                    <span className="font-medium text-ink">{freeShip ? "FREE" : `from ${inr(charge === 0 ? settings.localDeliveryCharge : charge)}${local ? "" : "*"}`}</span>
                   </div>
-                  <div className="flex justify-between border-t border-line pt-2 font-display text-lg font-semibold">
+                  <div className="flex justify-between border-t border-line pt-2 font-display text-lg font-medium">
                     <span>Total</span><span>{inr(afterDiscount + (freeShip ? 0 : charge))}</span>
                   </div>
                 </div>
-                <Link href="/checkout" onClick={() => setDrawer(false)} className="btn-rose mt-4 w-full">
-                  Checkout · wrap it with love
+                <Link href={user ? "/checkout" : "/login?next=/checkout"} onClick={() => setDrawer(false)} className="btn-rose mt-4 w-full">
+                  {user ? "Checkout · wrap it with love" : "Sign in to checkout"}
                 </Link>
-                <p className="mt-2.5 text-center text-[11px] text-ink-soft">COD & UPI accepted · Free delivery above {inr(settings.freeDeliveryAbove)}</p>
+                <p className="mt-2.5 text-center text-[11px] text-ink-soft">{user ? "COD where eligible · UPI at checkout" : "A Taj Gifts account is required to place an order."}</p>
               </div>
             )}
           </motion.aside>

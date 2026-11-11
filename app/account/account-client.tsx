@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { browserSupabase } from "@/lib/supabase/browser";
-import { inr, orderCode, dateTimeFmt } from "@/lib/store";
+import { inr, orderCode, dateTimeFmt } from "@/lib/format";
 import type { Order, OrderItem } from "@/lib/types";
 
 type Address = { id: string; label: string; name: string; phone: string; address: string; landmark: string | null; city: string; pincode: string; is_default: boolean };
@@ -21,6 +21,8 @@ export default function AccountClient({ user, initialTab }: { user: { id: string
   const [items, setItems] = useState<OrderItem[]>([]);
   const [addresses, setAddresses] = useState<Address[] | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [cancelling, setCancelling] = useState<string | null>(null);
+  const [cancelErr, setCancelErr] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const sb = browserSupabase();
@@ -39,6 +41,26 @@ export default function AccountClient({ user, initialTab }: { user: { id: string
       setItems((its.data as OrderItem[]) ?? []);
     }
   }, [user.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const cancelOrder = async (id: string) => {
+    if (!window.confirm("Cancel this order? The hampers return to stock and the studio is told right away.")) return;
+    setCancelErr(null);
+    setCancelling(id);
+    try {
+      const r = await fetch("/api/account/cancel-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: id }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!j.ok) setCancelErr(j.error || "Could not cancel this order.");
+      else await load();
+    } catch {
+      setCancelErr("Could not reach the studio. Please try again or WhatsApp us.");
+    } finally {
+      setCancelling(null);
+    }
+  };
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => {
@@ -66,7 +88,7 @@ export default function AccountClient({ user, initialTab }: { user: { id: string
 
       {needsSetup && (
         <div className="mt-8 rounded-3xl border-2 border-dashed border-rose/50 bg-blush/40 p-6">
-          <p className="font-display text-xl font-semibold">Accounts tables not installed yet</p>
+          <p className="font-display text-xl font-medium">Accounts tables not installed yet</p>
           <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink/75">
             Sign-in works, but order history & saved addresses need one SQL step: open your Supabase dashboard → <b>SQL editor</b> → paste the contents of
             <code className="mx-1 rounded bg-white px-2 py-0.5 font-mono text-[12px]">supabase/migrations/0001_accounts.sql</code> from this project → Run. Everything below switches on instantly (the owner can also hand the agent the DB password and it will apply it for you).
@@ -85,28 +107,42 @@ export default function AccountClient({ user, initialTab }: { user: { id: string
             )}
             {(orders ?? []).map((o) => {
               const its = items.filter((i) => i.order_id === o.id);
+              const canCancel = (o.status === "pending" || o.status === "confirmed") && o.payment_status !== "paid";
               return (
-                <Link key={o.id} href={`/order/${o.id}`} className="group rounded-[26px] border border-line bg-white/70 p-6 transition hover:-translate-y-1 hover:shadow-lg">
+                <div key={o.id} className="rounded-[26px] border border-line bg-white/70 p-6 transition hover:-translate-y-1 hover:shadow-lg">
+                  <Link href={`/order/${o.id}`} className="group block">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-display text-lg font-semibold">{orderCode(o.id)}</p>
+                      <p className="font-display text-lg font-medium">{orderCode(o.id)}</p>
                       <p className="text-[12px] text-ink-soft">{dateTimeFmt(o.created_at)}</p>
                     </div>
-                    <span className={"rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider " + (o.status === "delivered" ? "bg-mint" : o.status === "cancelled" ? "bg-blush text-rose-deep" : "bg-butter")}>{o.status}</span>
+                    <span className={"rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-wider " + (o.status === "delivered" ? "bg-mint" : o.status === "cancelled" ? "bg-blush text-rose-deep" : "bg-butter")}>{o.status}</span>
                   </div>
                   <div className="mt-4 flex gap-2">
                     {its.slice(0, 4).map((i) => (
                       <img key={i.id} src={i.image || "/img/hero.jpg"} alt={i.name} className="h-14 w-12 rounded-lg object-cover" />
                     ))}
-                    {its.length > 4 && <span className="self-center text-[12px] font-bold text-ink-soft">+{its.length - 4}</span>}
+                    {its.length > 4 && <span className="self-center text-[12px] font-medium text-ink-soft">+{its.length - 4}</span>}
                   </div>
                   <div className="mt-4 flex items-center justify-between text-sm">
                     <span className="text-ink-soft">{its.length} item{its.length === 1 ? "" : "s"} · {o.payment_method} · {o.payment_status}</span>
                     <b className="font-display text-lg">{inr(o.total)}</b>
                   </div>
-                </Link>
+                  </Link>
+                  {canCancel && (
+                    <button
+                      type="button"
+                      disabled={cancelling === o.id}
+                      onClick={() => cancelOrder(o.id)}
+                      className="mt-4 text-[12px] font-medium text-rose-deep underline underline-offset-4 disabled:opacity-50"
+                    >
+                      {cancelling === o.id ? "Cancelling…" : "Cancel this order"}
+                    </button>
+                  )}
+                </div>
               );
             })}
+            {cancelErr && <p className="md:col-span-2 rounded-2xl bg-blush/60 p-4 text-[13px] text-rose-deep">{cancelErr}</p>}
             {orders === null && <p className="font-script text-2xl text-ink-soft md:col-span-2">loading your gifts…</p>}
           </div>
         )}
@@ -124,12 +160,16 @@ function Addresses({ addresses, userId, reload }: { addresses: Address[] | null;
     if (!editing) return;
     const sb = browserSupabase();
     const payload = { ...editing, user_id: userId, is_default: !!editing.is_default };
+    // The database guarantees one default address per account. Clear the old
+    // default before inserting/updating the next one, rather than briefly
+    // creating two defaults in the browser.
+    if (payload.is_default) {
+      const clear = sb.from("addresses").update({ is_default: false }).eq("user_id", userId);
+      if (editing.id) await clear.neq("id", editing.id);
+      else await clear;
+    }
     if (editing.id) await sb.from("addresses").update(payload).eq("id", editing.id);
     else await sb.from("addresses").insert(payload);
-    if (payload.is_default) {
-      const all = await sb.from("addresses").select("id").eq("user_id", userId).neq("id", editing.id ?? "");
-      if (all.data?.length) await sb.from("addresses").update({ is_default: false }).in("id", all.data.map((a: { id: string }) => a.id));
-    }
     setEditing(null);
     reload();
   };
@@ -140,17 +180,17 @@ function Addresses({ addresses, userId, reload }: { addresses: Address[] | null;
         {(addresses ?? []).map((a) => (
           <div key={a.id} className="rounded-[24px] border border-line bg-white/70 p-6">
             <div className="flex items-center justify-between">
-              <p className="font-display text-lg font-semibold">{a.label} {a.is_default && <span className="ml-1 rounded-full bg-mint px-2 py-0.5 text-[10px] font-black uppercase">default</span>}</p>
-              <button className="text-[11px] font-black uppercase tracking-wider text-ink-soft hover:text-rose-deep" onClick={async () => { if (confirm("Remove this address?")) { await browserSupabase().from("addresses").delete().eq("id", a.id); reload(); } }}>Remove</button>
+              <p className="font-display text-lg font-medium">{a.label} {a.is_default && <span className="ml-1 rounded-full bg-mint px-2 py-0.5 text-[10px] font-medium uppercase">default</span>}</p>
+              <button className="text-[11px] font-medium uppercase tracking-wider text-ink-soft hover:text-rose-deep" onClick={async () => { if (confirm("Remove this address?")) { await browserSupabase().from("addresses").delete().eq("id", a.id); reload(); } }}>Remove</button>
             </div>
             <p className="mt-2 text-[14px] leading-relaxed text-ink-soft">
               <b className="text-ink">{a.name}</b> · {a.phone}<br />
               {a.address}{a.landmark ? `, ${a.landmark}` : ""}<br />{a.city} — {a.pincode}
             </p>
             <div className="mt-4 flex gap-3">
-              <button className="text-[11px] font-black uppercase tracking-wider text-rose hover:underline" onClick={() => setEditing(a)}>Edit</button>
+              <button className="text-[11px] font-medium uppercase tracking-wider text-rose hover:underline" onClick={() => setEditing(a)}>Edit</button>
               {!a.is_default && (
-                <button className="text-[11px] font-black uppercase tracking-wider text-ink-soft hover:underline" onClick={async () => {
+                <button className="text-[11px] font-medium uppercase tracking-wider text-ink-soft hover:underline" onClick={async () => {
                   const sb = browserSupabase();
                   await sb.from("addresses").update({ is_default: false }).eq("user_id", userId).neq("id", a.id);
                   await sb.from("addresses").update({ is_default: true }).eq("id", a.id);
@@ -166,7 +206,7 @@ function Addresses({ addresses, userId, reload }: { addresses: Address[] | null;
       {editing && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4 backdrop-blur-sm" onClick={() => setEditing(null)}>
           <div className="max-h-[88vh] w-full max-w-lg overflow-y-auto rounded-[28px] border border-line bg-cream p-8" onClick={(e) => e.stopPropagation()}>
-            <p className="font-display text-2xl font-semibold">{editing.id ? "Edit address" : "New address"}</p>
+            <p className="font-display text-2xl font-medium">{editing.id ? "Edit address" : "New address"}</p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div><label className="label">Label</label><input className="input" value={editing.label ?? ""} onChange={(e) => setEditing({ ...editing, label: e.target.value })} placeholder="Home / Office / Maika" /></div>
               <div><label className="label">Receiver name</label><input className="input" value={editing.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></div>
@@ -175,7 +215,7 @@ function Addresses({ addresses, userId, reload }: { addresses: Address[] | null;
               <div className="sm:col-span-2"><label className="label">Address</label><input className="input" value={editing.address ?? ""} onChange={(e) => setEditing({ ...editing, address: e.target.value })} /></div>
               <div><label className="label">Landmark</label><input className="input" value={editing.landmark ?? ""} onChange={(e) => setEditing({ ...editing, landmark: e.target.value })} /></div>
               <div><label className="label">City</label><input className="input" value={editing.city ?? ""} onChange={(e) => setEditing({ ...editing, city: e.target.value })} /></div>
-              <label className="flex items-center gap-2 text-sm font-bold sm:col-span-2"><input type="checkbox" className="h-4 w-4 accent-rose" checked={!!editing.is_default} onChange={(e) => setEditing({ ...editing, is_default: e.target.checked })} /> Default address</label>
+              <label className="flex items-center gap-2 text-sm font-medium sm:col-span-2"><input type="checkbox" className="h-4 w-4 accent-rose" checked={!!editing.is_default} onChange={(e) => setEditing({ ...editing, is_default: e.target.checked })} /> Default address</label>
             </div>
             <div className="mt-6 flex gap-3">
               <button className="btn-rose" onClick={save}>Save address</button>
@@ -203,12 +243,12 @@ function ProfileTab({ profile, reload }: { profile: Profile | null; reload: () =
         setMsg(error ? error.message : "Profile saved ✓");
         if (!error) reload();
       }}>
-        <p className="font-display text-xl font-semibold">Profile</p>
+        <p className="font-display text-xl font-medium">Profile</p>
         <div className="mt-5 grid gap-4">
           <div><label className="label">Full name</label><input className="input" value={f.full_name} onChange={(e) => setF({ ...f, full_name: e.target.value })} /></div>
           <div><label className="label">Phone</label><input className="input" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></div>
           <button className="btn-rose">Save profile</button>
-          {msg && <p className="text-sm font-bold text-mint-deep">{msg}</p>}
+          {msg && <p className="text-sm font-medium text-mint-deep">{msg}</p>}
         </div>
       </form>
       <form className="rounded-[26px] border border-line bg-white/70 p-7" onSubmit={async (e) => {
@@ -218,12 +258,12 @@ function ProfileTab({ profile, reload }: { profile: Profile | null; reload: () =
         setPwMsg(error ? error.message : "Password changed ✓ — use it next time you sign in.");
         if (!error) setPw({ next: "", confirm: "" });
       }}>
-        <p className="font-display text-xl font-semibold">Change password</p>
+        <p className="font-display text-xl font-medium">Change password</p>
         <div className="mt-5 grid gap-4">
           <div><label className="label">New password</label><input className="input" type="password" minLength={8} required value={pw.next} onChange={(e) => setPw({ ...pw, next: e.target.value })} /></div>
           <div><label className="label">Confirm new password</label><input className="input" type="password" minLength={8} required value={pw.confirm} onChange={(e) => setPw({ ...pw, confirm: e.target.value })} /></div>
           <button className="btn-primary">Update password</button>
-          {pwMsg && <p className="text-sm font-bold text-rose-deep">{pwMsg}</p>}
+          {pwMsg && <p className="text-sm font-medium text-rose-deep">{pwMsg}</p>}
         </div>
       </form>
     </div>

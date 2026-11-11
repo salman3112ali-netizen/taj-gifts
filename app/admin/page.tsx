@@ -1,8 +1,7 @@
 "use client";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Coupon, Order, OrderItem, Product, Settings } from "@/lib/types";
-import { dateTimeFmt, inr, orderCode } from "@/lib/store";
-import { hamperArtUrl } from "@/lib/hamper-art";
+import { dateTimeFmt, inr, orderCode } from "@/lib/format";
 import { workOrderLink } from "@/lib/workorder";
 
 /** admin fetch with the per-tab bearer token (website asks password every tab) */
@@ -123,11 +122,11 @@ function Login({ onOk }: { onOk: () => void }) {
           else setErr(j.error);
         }}
       >
-        <p className="font-display text-3xl font-semibold">Studio door</p>
+        <p className="font-display text-3xl font-medium">Studio door</p>
         <p className="mt-1 font-script text-xl text-ink-soft">staff only, ribbons everywhere</p>
         <label className="label mt-7">Password</label>
         <input type="password" className="input" value={pw} onChange={(e) => { setPw(e.target.value); setErr(null); }} placeholder="••••••••" autoFocus />
-        {err && <p className="mt-2 text-sm font-bold text-rose-deep">{err}</p>}
+        {err && <p className="mt-2 text-sm font-medium text-rose-deep">{err}</p>}
         <button className="btn-rose mt-5 w-full">Unlock</button>
       </form>
     </section>
@@ -158,14 +157,14 @@ function Orders({ data, reload }: { data: Data; reload: () => void }) {
       <div className="grid gap-4 sm:grid-cols-4">
         {[["Orders", String(stats.count)], ["Revenue", inr(stats.revenue)], ["Paid", String(stats.paid)], ["Awaiting action", String(stats.pending)]].map(([t, v]) => (
           <div key={t} className={card + " p-5"}>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-ink-soft">{t}</p>
-            <p className="font-display mt-1 text-3xl font-semibold">{v}</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink-soft">{t}</p>
+            <p className="font-display mt-1 text-3xl font-medium">{v}</p>
           </div>
         ))}
       </div>
       <div className={card + " mt-6 overflow-x-auto"}>
         <table className="w-full min-w-[820px] text-left text-sm">
-          <thead className="border-b border-line text-[10px] font-black uppercase tracking-[0.18em] text-ink-soft">
+          <thead className="border-b border-line text-[10px] font-medium uppercase tracking-[0.18em] text-ink-soft">
             <tr>{["Order", "Customer", "Items", "Total", "Payment", "Status", ""].map((h) => <th key={h} className="px-5 py-4">{h}</th>)}</tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -177,15 +176,15 @@ function Orders({ data, reload }: { data: Data; reload: () => void }) {
                     <td className="px-5 py-4"><b>{orderCode(o.id)}</b><br /><span className="text-[11px] text-ink-soft">{dateTimeFmt(o.created_at)}</span></td>
                     <td className="px-5 py-4">{o.customer_name}<br /><span className="text-[11px] text-ink-soft">{o.customer_phone} · {o.customer_city}</span></td>
                     <td className="px-5 py-4 text-ink-soft">{its.length} line{its.length === 1 ? "" : "s"}</td>
-                    <td className="px-5 py-4 font-bold">{inr(o.total)}</td>
+                    <td className="px-5 py-4 font-medium">{inr(o.total)}</td>
                     <td className="px-5 py-4">
-                      <span className={"inline-block rounded-full border border-ink/15 bg-white px-2.5 py-1 text-[11px] font-bold " + (o.payment_status === "paid" ? "bg-mint" : o.payment_status === "refunded" ? "bg-blush text-rose-deep" : "")}>
+                      <span className={"inline-block rounded-full border border-ink/15 bg-white px-2.5 py-1 text-[11px] font-medium " + (o.payment_status === "paid" ? "bg-mint" : o.payment_status === "refunded" ? "bg-blush text-rose-deep" : "")}>
                         {o.payment_status}
                       </span>
                       <br /><span className="text-[11px] text-ink-soft">{o.payment_method}</span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className={"inline-block rounded-full border px-2.5 py-1 text-[11px] font-black uppercase " + (o.status === "cancelled" ? "border-rose bg-blush text-rose-deep" : o.status === "delivered" ? "border-mint-deep bg-mint" : "border-butter bg-butter/60")}>
+                      <span className={"inline-block rounded-full border px-2.5 py-1 text-[11px] font-medium uppercase " + (o.status === "cancelled" ? "border-rose bg-blush text-rose-deep" : o.status === "delivered" ? "border-mint-deep bg-mint" : "border-butter bg-butter/60")}>
                         {o.status.replace(/_/g, " ")}
                       </span>
                     </td>
@@ -201,7 +200,7 @@ function Orders({ data, reload }: { data: Data; reload: () => void }) {
                           {o.status === "out_for_delivery" && (
                             <span className="flex flex-wrap items-center gap-2">
                               <input
-                                className="input w-36 text-center font-mono text-lg font-black tracking-[0.2em]"
+                                className="input w-36 text-center font-mono text-lg font-medium tracking-[0.2em]"
                                 placeholder="6-digit code"
                                 inputMode="numeric"
                                 maxLength={6}
@@ -214,15 +213,15 @@ function Orders({ data, reload }: { data: Data; reload: () => void }) {
                               <button className="btn-ghost" onClick={() => { const note = prompt("Delivery attempt note (for example: recipient asked for 20 minutes)"); if (note) act(o, "attempt", { note }); }}>Record attempt</button>
                             </span>
                           )}
-                          {o.status === "delivered" && <span className="rounded-full bg-mint px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-ink">delivered ✓</span>}
-                          {o.status !== "cancelled" && o.status !== "delivered" && o.payment_status !== "paid" && (
+                          {o.status === "delivered" && <span className="rounded-full bg-mint px-4 py-1.5 text-[11px] font-medium uppercase tracking-wider text-ink">delivered ✓</span>}
+                          {o.status !== "cancelled" && o.status !== "delivered" && !["paid", "refunded"].includes(o.payment_status) && (
                             <button className="btn-ghost" onClick={() => act(o, "mark_paid")}>Mark payment received</button>
                           )}
                           {o.payment_status === "paid" && o.status !== "delivered" && (
                             <button className="btn-ghost" onClick={() => { const note = prompt("Refund reference / note (this records a refund; send the money in Razorpay/UPI separately)"); if (note) act(o, "mark_refunded", { note }); }}>Mark refund sent</button>
                           )}
-                          {o.status !== "cancelled" && o.status !== "delivered" && (
-                            <button className="btn-ghost" onClick={() => { if (confirm("Cancel this order and restock the hampers?")) act(o, "cancel"); }}>Cancel + restock</button>
+                          {o.status !== "cancelled" && o.status !== "delivered" && o.payment_status !== "paid" && (
+                            <button className="btn-ghost" onClick={() => { if (confirm("Cancel this order and restock the hampers? A paid order must be refunded and recorded first.")) act(o, "cancel"); }}>Cancel + restock</button>
                           )}
                           <a className="btn-ghost" href={`tel:+91${o.customer_phone}`}>📞 Call</a>
                           <a className="btn-ghost" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${o.customer_address}, ${o.customer_landmark ?? ""} ${o.customer_city} ${o.customer_pincode}`)}`} target="_blank" rel="noreferrer">🗺 Route</a>
@@ -243,22 +242,16 @@ function Orders({ data, reload }: { data: Data; reload: () => void }) {
                             {o.gift_note && <p className="rounded-xl bg-butter/60 px-3 py-2 font-script text-lg text-ink">“{o.gift_note}”{o.gift_sender_name ? ` — ${o.gift_sender_name}` : ""}</p>}
                             {o.gift_delivery_date && <p><b className="text-ink">Deliver on:</b> {o.gift_delivery_date}</p>}
                             <div className="flex flex-wrap gap-2 pt-1">
-                              <a className="inline-block rounded-full bg-mint px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-ink" href={`https://wa.me/91${o.customer_phone}`} target="_blank" rel="noreferrer">WhatsApp customer</a>
+                              <a className="inline-block rounded-full bg-mint px-4 py-1.5 text-[11px] font-medium uppercase tracking-wider text-ink" href={`https://wa.me/91${o.customer_phone}`} target="_blank" rel="noreferrer">WhatsApp customer</a>
                               <a
-                                className="inline-block rounded-full bg-rose px-4 py-1.5 text-[11px] font-black uppercase tracking-wider text-white"
-                                href={workOrderLink(o, its, data.settings as Settings, hamperArtUrl({ names: its.map((i) => i.name), occasion: its[0]?.occasion ?? undefined, seed: o.id }))}
+                                className="inline-block rounded-full bg-rose px-4 py-1.5 text-[11px] font-medium uppercase tracking-wider text-white"
+                                href={workOrderLink(o, its, data.settings as Settings)}
                                 target="_blank"
                                 rel="noreferrer"
                               >
                                  WA work-order to studio
                               </a>
                             </div>
-                            <img
-                              src={hamperArtUrl({ names: its.map((i) => i.name), occasion: its[0]?.occasion ?? undefined, seed: o.id })}
-                              alt="AI hamper preview"
-                              loading="lazy"
-                              className="mt-3 h-28 w-24 rounded-xl border border-line object-cover"
-                            />
                           </div>
                         </div>
                       </td>
@@ -315,7 +308,7 @@ function Products({ data, reload }: { data: Data; reload: () => void }) {
       <button className="btn-primary mb-5" onClick={() => setEditing({ occasion: "Festive", stock: 10, published: true, image: "/img/hero.jpg", gallery: [], contents: [], variants: [], addons: [] })}>+ New hamper</button>
       <div className={card + " overflow-x-auto"}>
         <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="border-b border-line text-[10px] font-black uppercase tracking-[0.18em] text-ink-soft">
+          <thead className="border-b border-line text-[10px] font-medium uppercase tracking-[0.18em] text-ink-soft">
             <tr>{["", "Hamper", "Occasion", "Price", "Stock", "Live", ""].map((h, i) => <th key={i} className="px-5 py-4">{h}</th>)}</tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -324,16 +317,16 @@ function Products({ data, reload }: { data: Data; reload: () => void }) {
                 <td className="px-5 py-3"><img src={p.image} alt="" className="h-12 w-10 rounded-lg object-cover" /></td>
                 <td className="px-5 py-3"><b>{p.name}</b><br /><span className="text-[11px] text-ink-soft">/{p.slug}</span></td>
                 <td className="px-5 py-3">{p.occasion}</td>
-                <td className="px-5 py-3 font-bold">{inr(p.price)}</td>
+                <td className="px-5 py-3 font-medium">{inr(p.price)}</td>
                 <td className="px-5 py-3">{p.stock}</td>
                 <td className="px-5 py-3">
-                  <button onClick={async () => { await afetch("/api/admin/product", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: p.id, published: !p.published }) }); reload(); }} className={"rounded-full px-3 py-1 text-[10px] font-black uppercase " + (p.published ? "bg-mint text-ink" : "bg-cream-deep text-ink-soft")}>
+                  <button onClick={async () => { await afetch("/api/admin/product", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: p.id, published: !p.published }) }); reload(); }} className={"rounded-full px-3 py-1 text-[10px] font-medium uppercase " + (p.published ? "bg-mint text-ink" : "bg-cream-deep text-ink-soft")}>
                     {p.published ? "live" : "hidden"}
                   </button>
                 </td>
                 <td className="px-5 py-3">
-                  <button className="mr-2 text-[11px] font-black uppercase tracking-wider text-rose hover:underline" onClick={() => setEditing({ ...p, contents: (p.contents ?? []).join("\n") as unknown as string[] })}>Edit</button>
-                  <button className="text-[11px] font-black uppercase tracking-wider text-ink-soft hover:text-rose-deep hover:underline" onClick={() => del(p.id)}>Delete</button>
+                  <button className="mr-2 text-[11px] font-medium uppercase tracking-wider text-rose hover:underline" onClick={() => setEditing({ ...p, contents: (p.contents ?? []).join("\n") as unknown as string[] })}>Edit</button>
+                  <button className="text-[11px] font-medium uppercase tracking-wider text-ink-soft hover:text-rose-deep hover:underline" onClick={() => del(p.id)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -344,7 +337,7 @@ function Products({ data, reload }: { data: Data; reload: () => void }) {
       {editing && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4 backdrop-blur-sm" onClick={() => setEditing(null)}>
           <div className={card + " max-h-[88vh] w-full max-w-2xl overflow-y-auto bg-cream p-8"} onClick={(e) => e.stopPropagation()}>
-            <p className="font-display text-2xl font-semibold">{editing.id ? "Edit hamper" : "New hamper"}</p>
+            <p className="font-display text-2xl font-medium">{editing.id ? "Edit hamper" : "New hamper"}</p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2"><label className="label">Name</label><input className="input" value={editing.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></div>
               <div><label className="label">Occasion</label><input className="input" value={editing.occasion ?? ""} onChange={(e) => setEditing({ ...editing, occasion: e.target.value })} /></div>
@@ -382,7 +375,7 @@ function Products({ data, reload }: { data: Data; reload: () => void }) {
                   {(editing.gallery ?? []).map((g, gi) => (
                     <span key={gi} className="relative inline-block">
                       <img src={g} alt="" className="h-16 w-14 rounded-lg object-cover" />
-                      <button onClick={() => setEditing({ ...editing, gallery: (editing.gallery ?? []).filter((_, x) => x !== gi) })} className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-ink text-[10px] font-black text-cream" title="Remove">×</button>
+                      <button onClick={() => setEditing({ ...editing, gallery: (editing.gallery ?? []).filter((_, x) => x !== gi) })} className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-ink text-[10px] font-medium text-cream" title="Remove">×</button>
                     </span>
                   ))}
                   <label className={"btn-ghost cursor-pointer" + (busy ? " pointer-events-none opacity-50" : "")}>
@@ -393,8 +386,8 @@ function Products({ data, reload }: { data: Data; reload: () => void }) {
                   <button className="btn-ghost" onClick={() => { const u = galUrl.trim(); if (u) { setEditing({ ...editing, gallery: [...(editing.gallery ?? []), u] }); setGalUrl(""); } }}>Add</button>
                 </div>
               </div>
-              <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" className="h-4 w-4 accent-rose" checked={!!editing.featured} onChange={(e) => setEditing({ ...editing, featured: e.target.checked })} /> Featured on home</label>
-              <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" className="h-4 w-4 accent-rose" checked={editing.published !== false} onChange={(e) => setEditing({ ...editing, published: e.target.checked })} /> Published</label>
+              <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" className="h-4 w-4 accent-rose" checked={!!editing.featured} onChange={(e) => setEditing({ ...editing, featured: e.target.checked })} /> Featured on home</label>
+              <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" className="h-4 w-4 accent-rose" checked={editing.published !== false} onChange={(e) => setEditing({ ...editing, published: e.target.checked })} /> Published</label>
             </div>
             <div className="mt-6 flex gap-3">
               <button className="btn-rose" onClick={save}>Save hamper</button>
@@ -413,18 +406,18 @@ function Coupons({ data, reload }: { data: Data; reload: () => void }) {
     <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
       <div className={card + " overflow-x-auto"}>
         <table className="w-full min-w-[560px] text-left text-sm">
-          <thead className="border-b border-line text-[10px] font-black uppercase tracking-[0.18em] text-ink-soft"><tr>{["Code", "Deal", "Min order", "Uses", "Active", ""].map((h) => <th key={h} className="px-5 py-4">{h}</th>)}</tr></thead>
+          <thead className="border-b border-line text-[10px] font-medium uppercase tracking-[0.18em] text-ink-soft"><tr>{["Code", "Deal", "Min order", "Uses", "Active", ""].map((h) => <th key={h} className="px-5 py-4">{h}</th>)}</tr></thead>
           <tbody className="divide-y divide-line">
             {data.coupons.map((c) => (
               <tr key={c.code} className="hover:bg-cream-deep/50">
-                <td className="px-5 py-4 font-mono font-bold">{c.code}</td>
+                <td className="px-5 py-4 font-mono font-medium">{c.code}</td>
                 <td className="px-5 py-4">{c.type === "flat" ? inr(c.value) + " off" : c.value + "% off"}<br /><span className="text-[11px] text-ink-soft">{c.label}</span></td>
                 <td className="px-5 py-4">{inr(c.min_order)}</td>
                 <td className="px-5 py-4">{c.uses}</td>
                 <td className="px-5 py-4">
-                  <button onClick={async () => { await afetch("/api/admin/coupon", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: c.code, active: !c.active }) }); reload(); }} className={"rounded-full px-3 py-1 text-[10px] font-black uppercase " + (c.active ? "bg-mint" : "bg-cream-deep text-ink-soft")}>{c.active ? "on" : "off"}</button>
+                  <button onClick={async () => { await afetch("/api/admin/coupon", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: c.code, active: !c.active }) }); reload(); }} className={"rounded-full px-3 py-1 text-[10px] font-medium uppercase " + (c.active ? "bg-mint" : "bg-cream-deep text-ink-soft")}>{c.active ? "on" : "off"}</button>
                 </td>
-                <td className="px-5 py-4"><button className="text-[11px] font-black uppercase tracking-wider text-ink-soft hover:text-rose-deep hover:underline" onClick={async () => { if (confirm("Delete " + c.code + "?")) { await afetch("/api/admin/coupon?code=" + c.code, { method: "DELETE" }); reload(); } }}>Delete</button></td>
+                <td className="px-5 py-4"><button className="text-[11px] font-medium uppercase tracking-wider text-ink-soft hover:text-rose-deep hover:underline" onClick={async () => { if (confirm("Delete " + c.code + "?")) { await afetch("/api/admin/coupon?code=" + c.code, { method: "DELETE" }); reload(); } }}>Delete</button></td>
               </tr>
             ))}
           </tbody>
@@ -435,7 +428,7 @@ function Coupons({ data, reload }: { data: Data; reload: () => void }) {
         await afetch("/api/admin/coupon", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...n, value: Number(n.value), min_order: Number(n.min_order) }) });
         setN({ code: "", type: "flat", value: "", min_order: "", label: "" }); reload();
       }}>
-        <p className="font-display text-xl font-semibold">New coupon</p>
+        <p className="font-display text-xl font-medium">New coupon</p>
         <div className="mt-4 grid gap-3">
           <input className="input uppercase" placeholder="CODE" required value={n.code} onChange={(e) => setN({ ...n, code: e.target.value })} />
           <div className="grid grid-cols-2 gap-3">
@@ -455,17 +448,17 @@ function Customers({ data }: { data: Data }) {
   return (
     <div className={card + " overflow-x-auto"}>
       <table className="w-full min-w-[640px] text-left text-sm">
-        <thead className="border-b border-line text-[10px] font-black uppercase tracking-[0.18em] text-ink-soft">
+        <thead className="border-b border-line text-[10px] font-medium uppercase tracking-[0.18em] text-ink-soft">
           <tr>{["Customer", "Phone / email", "City", "Orders", "Lifetime spend", "Last order"].map((h) => <th key={h} className="px-5 py-4">{h}</th>)}</tr>
         </thead>
         <tbody className="divide-y divide-line">
           {data.customers.map((c) => (
             <tr key={c.phone} className="hover:bg-cream-deep/50">
-              <td className="px-5 py-4 font-bold">{c.name}</td>
+              <td className="px-5 py-4 font-medium">{c.name}</td>
               <td className="px-5 py-4">{c.phone}<br /><span className="text-[11px] text-ink-soft">{c.email}</span></td>
               <td className="px-5 py-4">{c.city}</td>
               <td className="px-5 py-4">{c.order_count}</td>
-              <td className="px-5 py-4 font-bold">{inr(c.total_spend ?? 0)}</td>
+              <td className="px-5 py-4 font-medium">{inr(c.total_spend ?? 0)}</td>
               <td className="px-5 py-4 text-ink-soft">{c.last_order_at ? dateTimeFmt(c.last_order_at) : "—"}</td>
             </tr>
           ))}
@@ -480,11 +473,11 @@ function Enquiries({ data }: { data: Data }) {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className={card + " p-7"}>
-        <p className="font-display text-xl font-semibold">Custom-hamper enquiries <span className="text-ink-soft">({data.leads.length})</span></p>
+        <p className="font-display text-xl font-medium">Custom-hamper enquiries <span className="text-ink-soft">({data.leads.length})</span></p>
         <ul className="mt-4 space-y-4">
           {data.leads.map((l) => (
             <li key={l.id} className="rounded-2xl bg-cream-deep/60 p-4">
-              <p className="font-bold">{l.name} · <a className="text-rose" href={`https://wa.me/91${l.phone.replace(/\D/g, "").slice(-10)}`} target="_blank" rel="noreferrer">{l.phone}</a></p>
+              <p className="font-medium">{l.name} · <a className="text-rose" href={`https://wa.me/91${l.phone.replace(/\D/g, "").slice(-10)}`} target="_blank" rel="noreferrer">{l.phone}</a></p>
               <p className="mt-1 text-sm text-ink-soft">{l.message}</p>
               <p className="mt-1 text-[11px] text-ink-soft/70">{dateTimeFmt(l.created_at)}</p>
             </li>
@@ -493,7 +486,7 @@ function Enquiries({ data }: { data: Data }) {
         </ul>
       </div>
       <div className={card + " p-7"}>
-        <p className="font-display text-xl font-semibold">Newsletter family <span className="text-ink-soft">({data.subscribers.length})</span></p>
+        <p className="font-display text-xl font-medium">Newsletter family <span className="text-ink-soft">({data.subscribers.length})</span></p>
         <ul className="mt-4 space-y-2 text-sm">
           {data.subscribers.map((s) => <li key={s.email} className="flex justify-between border-b border-line/60 pb-2"><span>{s.email}</span><span className="text-[11px] text-ink-soft">{dateTimeFmt(s.created_at)}</span></li>)}
           {data.subscribers.length === 0 && <li className="font-script text-xl text-ink-soft">no subscribers yet</li>}
@@ -518,7 +511,7 @@ function SettingsTab({ data, reload }: { data: Data; reload: () => void }) {
       setMsg(j.ok ? "Saved ✓ (site updates within a minute)" : j.error);
       if (j.ok) { setPw(""); reload(); }
     }}>
-      <p className="font-display text-2xl font-semibold">Shop settings</p>
+      <p className="font-display text-2xl font-medium">Shop settings</p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div><label className="label">Shop name</label><input className="input" value={s.shopName ?? ""} onChange={(e) => up("shopName", e.target.value)} /></div>
         <div><label className="label">Tagline</label><input className="input" value={s.tagline ?? ""} onChange={(e) => up("tagline", e.target.value)} /></div>
@@ -534,12 +527,12 @@ function SettingsTab({ data, reload }: { data: Data; reload: () => void }) {
         <div><label className="label">Local delivery charge ₹</label><input className="input" type="number" value={s.localDeliveryCharge ?? 0} onChange={(e) => up("localDeliveryCharge", Number(e.target.value))} /></div>
         <div><label className="label">Free delivery above ₹</label><input className="input" type="number" value={s.freeDeliveryAbove ?? 0} onChange={(e) => up("freeDeliveryAbove", Number(e.target.value))} /></div>
         <div className="sm:col-span-2"><label className="label">Local pincodes (comma separated)</label><input className="input" value={Array.isArray(s.localPincodes) ? s.localPincodes.join(", ") : s.localPincodes} onChange={(e) => up("localPincodes", e.target.value)} /></div>
-        <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" className="h-4 w-4 accent-rose" checked={!!s.codAvailable} onChange={(e) => up("codAvailable", e.target.checked)} /> Cash on delivery</label>
-        <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" className="h-4 w-4 accent-rose" checked={!!s.shopOpen} onChange={(e) => up("shopOpen", e.target.checked)} /> Shop open</label>
+        <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" className="h-4 w-4 accent-rose" checked={!!s.codAvailable} onChange={(e) => up("codAvailable", e.target.checked)} /> Cash on delivery</label>
+        <label className="flex items-center gap-2 text-sm font-medium"><input type="checkbox" className="h-4 w-4 accent-rose" checked={!!s.shopOpen} onChange={(e) => up("shopOpen", e.target.checked)} /> Shop open</label>
         <div className="sm:col-span-2"><label className="label">Change admin password (leave blank to keep)</label><input className="input" type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="min 8 characters" /></div>
       </div>
       <button className="btn-rose mt-6">Save settings</button>
-      {msg && <p className="mt-3 text-sm font-bold text-mint-deep">{msg}</p>}
+      {msg && <p className="mt-3 text-sm font-medium text-mint-deep">{msg}</p>}
     </form>
   );
 }
@@ -553,11 +546,11 @@ const API_GROUPS: { title: string; note?: string; test?: "email" | "wa" | "teleg
       ["orderNotifyEmail", "Owner alert email", "where every new-order alert goes"],
       ["resendKey", "Resend API key", "re_… from resend.com"],
       ["resendFrom", "Resend from address", "Taj Gifts Studio <onboarding@resend.dev> works free"],
-      ["smtpUser", "SMTP user (fallback)", "e.g. tajgifts.in@gmail.com"],
+      ["smtpUser", "SMTP user (fallback)", "e.g. tajgifts.orders@gmail.com"],
       ["smtpPass", "SMTP app password", "app password, never your login password"],
       ["smtpHost", "SMTP host", "default smtp.gmail.com"],
       ["smtpPort", "SMTP port", "default 465"],
-      ["mailFrom", "Customer emails from", "Taj Gifts <orders@tajgifts.in>"],
+      ["mailFrom", "Customer emails from", "Taj Gifts <tajgifts.orders@gmail.com>"],
     ],
   },
   {
@@ -571,7 +564,7 @@ const API_GROUPS: { title: string; note?: string; test?: "email" | "wa" | "teleg
   },
   {
     title: "WhatsApp Cloud API bot", test: "wa",
-    note: "Official Meta bot that pings your WhatsApp with the full order brief + AI sketch.",
+    note: "Official Meta bot that pings your WhatsApp with the order brief.",
     fields: [
       ["metaWaToken", "Meta access token"],
       ["metaWaPhoneId", "WhatsApp phone-number id"],
@@ -593,11 +586,6 @@ const API_GROUPS: { title: string; note?: string; test?: "email" | "wa" | "teleg
     fields: [["rzpKeyId", "Key id"], ["rzpKeySecret", "Key secret"]],
   },
   {
-    title: "AI hamper previews",
-    note: "Powerful-model sketch attached to owner alerts & shown on tracking pages.",
-    fields: [["geminiKey", "Gemini API key"], ["geminiModel", "Gemini image model", "default gemini-2.5-flash-image"], ["openaiKey", "OpenAI API key"], ["openaiModel", "OpenAI image model", "default gpt-image-1"]],
-  },
-  {
     title: "CallMeBot (paused provider)",
     fields: [["callmebotKey", "CallMeBot API key"], ["callmebotPhone", "CallMeBot phone"]],
   },
@@ -607,7 +595,6 @@ function ApisTab() {
   const [vals, setVals] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState<Record<string, boolean>>({});
   const [fromEnv, setFromEnv] = useState<Record<string, boolean>>({});
-  const [show, setShow] = useState<Record<string, boolean>>({});
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -637,19 +624,17 @@ function ApisTab() {
   return (
     <div className="grid gap-6">
       <div className={card + " p-6"}>
-        <p className="font-display text-2xl font-semibold">APIs & keys</p>
+        <p className="font-display text-2xl font-medium">APIs & keys</p>
         <p className="mt-1 text-[13px] leading-relaxed text-ink-soft">
-          Every external integration lives here. Save a value and it goes live instantly (stored encrypted-at-rest in your Supabase settings);
-          clear a field to fall back to the Netlify environment variable. Badges show where each value currently comes from.
+          Integration values are server-only. Existing keys are never sent back into this browser; type a value only when you want to replace it. For the strongest production setup, keep long-lived secrets in Netlify environment variables. Badges show where an active value currently comes from.
         </p>
-        {msg && <p className="mt-3 rounded-xl bg-butter/70 px-4 py-2.5 text-[13px] font-bold">{msg}</p>}
+        {msg && <p className="mt-3 rounded-xl bg-butter/70 px-4 py-2.5 text-[13px] font-medium">{msg}</p>}
       </div>
       {API_GROUPS.map((g) => (
         <div key={g.title} className={card + " p-6"}>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="font-display text-lg font-semibold">{g.title}</p>
+            <p className="font-display text-lg font-medium">{g.title}</p>
             <div className="flex gap-2">
-              <button className="btn-ghost" onClick={() => setShow({ ...show, [g.title]: !show[g.title] })}>{show[g.title] ? "Hide values" : "Show values"}</button>
               {g.test && <button className="btn-ghost" disabled={busy} onClick={() => g.test && test(g.test)}>Send test</button>}
             </div>
           </div>
@@ -659,19 +644,22 @@ function ApisTab() {
               <div key={k}>
                 <label className="label flex items-center gap-2">
                   {label}
-                  <span className={"rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wider " + (saved[k] ? "bg-mint text-ink" : fromEnv[k] ? "bg-lav text-ink" : "bg-cream-deep text-ink-soft")}>
+                  <span className={"rounded-full px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider " + (saved[k] ? "bg-mint text-ink" : fromEnv[k] ? "bg-lav text-ink" : "bg-cream-deep text-ink-soft")}>
                     {saved[k] ? "saved here" : fromEnv[k] ? "from env" : "not set"}
                   </span>
                 </label>
-                <input
-                  className="input font-mono text-[12px]"
-                  type={show[g.title] ? "text" : "password"}
-                  autoComplete="off"
-                  spellCheck={false}
-                  value={vals[k] ?? ""}
-                  placeholder={fromEnv[k] && !saved[k] ? "••• set in Netlify env — type to override" : hint || ""}
-                  onChange={(e) => setVals({ ...vals, [k]: e.target.value })}
-                />
+                <div className="flex gap-2">
+                  <input
+                    className="input font-mono text-[12px]"
+                    type="password"
+                    autoComplete="new-password"
+                    spellCheck={false}
+                    value={vals[k] ?? ""}
+                    placeholder={saved[k] ? "Saved override — type to replace" : fromEnv[k] ? "Set in Netlify env — type to override" : hint || ""}
+                    onChange={(e) => setVals({ ...vals, [k]: e.target.value })}
+                  />
+                  {saved[k] && <button type="button" className="btn-ghost shrink-0 px-3 text-[10px]" onClick={() => setVals({ ...vals, [k]: "" })}>Clear override</button>}
+                </div>
               </div>
             ))}
           </div>

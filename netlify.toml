@@ -15,14 +15,7 @@
   [headers.values]
     Cache-Control = "public, max-age=604800, immutable"
 
-# APK must never be served stale/cached-broken: always revalidate.
-[[headers]]
-  for = "/tajgifts.apk"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-    Content-Type = "application/vnd.android.package-archive"
-
-# Bank-grade transport & framing headers on every page.
+# Baseline transport, framing and browser-permission headers on every page.
 [[headers]]
   for = "/*"
   [headers.values]
@@ -31,3 +24,10 @@
     X-Frame-Options = "SAMEORIGIN"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+    X-DNS-Prefetch-Control = "off"
+    # Content-Security-Policy: blocks injected third-party scripts, framing of
+    # our checkout by other sites, and form posts to foreign domains. The only
+    # allowed third parties are Supabase (data/auth), Razorpay (payments) and
+    # Meta Pixel (already used on the storefront).
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.razorpay.com https://lumberjack.razorpay.com https://connect.facebook.net https://www.facebook.com; frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com; media-src 'self' https:; worker-src 'self' blob:; upgrade-insecure-requests"

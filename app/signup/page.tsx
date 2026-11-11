@@ -1,12 +1,18 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { AuthShell } from "@/components/auth-shell";
 import { browserSupabase } from "@/lib/supabase/browser";
 
-export default function Signup() {
+function safeNext(value: string | null) {
+  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/account";
+}
+
+function SignupForm() {
   const router = useRouter();
+  const params = useSearchParams();
+  const next = safeNext(params.get("next"));
   const [f, setF] = useState({ name: "", phone: "", email: "", pw: "" });
   const [err, setErr] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
@@ -14,37 +20,41 @@ export default function Signup() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBusy(true); setErr(null);
+    setErr(null);
+    if (f.pw.length < 10) {
+      return setErr("Please use at least 10 characters — a short phrase you'll remember works well.");
+    }
+    setBusy(true);
     const sb = browserSupabase();
     const { data, error } = await sb.auth.signUp({
       email: f.email,
       password: f.pw,
       options: {
         data: { full_name: f.name, phone: f.phone.replace(/\D/g, "").slice(-10) },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/account`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
     setBusy(false);
     if (error) return setErr(error.message);
     if (data.session) {
-      // email auto-confirmed → profile trigger already ran; just continue
-      router.push("/account");
+      router.push(next);
       router.refresh();
     } else {
       setSent(true);
     }
   };
 
-  if (sent)
+  if (sent) {
     return (
       <AuthShell title="One last step" script="check your inbox ♥">
         <div className="rounded-2xl bg-mint p-6 text-[15px] leading-relaxed">
-          <p className="font-bold">We've sent a confirmation link to {f.email}.</p>
-          <p className="mt-2 text-ink/70">Click it once and your account is live — order history, saved addresses, faster checkout. No email? Check spam, or write to us on WhatsApp.</p>
+          <p className="font-medium">We&apos;ve sent a confirmation link to {f.email}.</p>
+          <p className="mt-2 text-ink/70">Click it once and your account is live. Then you&apos;ll return to your account or checkout securely.</p>
         </div>
-        <Link href="/login" className="btn-ghost mt-5 w-full">Back to sign in</Link>
+        <Link href={`/login?next=${encodeURIComponent(next)}`} className="btn-ghost mt-5 w-full">Back to sign in</Link>
       </AuthShell>
     );
+  }
 
   return (
     <AuthShell title="Create your account" script="gifts remember you here">
@@ -54,15 +64,19 @@ export default function Signup() {
         <div><label className="label">Email</label><input className="input" type="email" required value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} placeholder="you@example.com" /></div>
         <div>
           <label className="label">Password</label>
-          <input className="input" type="password" required minLength={8} value={f.pw} onChange={(e) => setF({ ...f, pw: e.target.value })} placeholder="8+ characters" />
-          <p className="mt-1 text-[11px] text-ink-soft">Mix letters, a number & a symbol — your future self thanks you.</p>
+          <input className="input" type="password" required minLength={10} value={f.pw} onChange={(e) => setF({ ...f, pw: e.target.value })} placeholder="10+ characters" />
+          <p className="mt-1 text-[11px] text-ink-soft">Use at least 8 characters. A mix of letters, numbers and a symbol is safer.</p>
         </div>
-        {err && <p className="rounded-xl bg-blush px-4 py-3 text-sm font-bold text-rose-deep">{err}</p>}
-        <button className="btn-rose w-full" disabled={busy}>{busy ? "Tying your account…" : "Create account"}</button>
-        <p className="text-center text-[13px] font-semibold text-ink-soft">
-          Already family? <Link href="/login" className="text-rose hover:underline">Sign in →</Link>
+        {err && <p className="rounded-xl bg-blush px-4 py-3 text-sm font-medium text-rose-deep">{err}</p>}
+        <button className="btn-rose w-full" disabled={busy}>{busy ? "Creating your account…" : "Create account"}</button>
+        <p className="text-center text-[13px] font-medium text-ink-soft">
+          Already have an account? <Link href={`/login?next=${encodeURIComponent(next)}`} className="text-rose hover:underline">Sign in →</Link>
         </p>
       </form>
     </AuthShell>
   );
+}
+
+export default function Signup() {
+  return <Suspense><SignupForm /></Suspense>;
 }

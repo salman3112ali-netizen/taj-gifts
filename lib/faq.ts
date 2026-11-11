@@ -1,8 +1,26 @@
 export const FAQS: { q: string; a: string }[] = [
-  { q: "Where do you deliver, and how fast?", a: "Same-day hand-delivery inside Kashipur and nearby pincodes (244713, 244715, 244001, 263139, 263153). Everywhere else in India ships double-boxed via trusted couriers, dispatched before 2 pm the same day for orders placed in the morning. Festive peaks may add a day or two — we'll always tell you upfront." },
-  { q: "Can I customise a hamper completely?", a: "Yes — that's our favourite kind of order. WhatsApp us your occasion, budget and any must-haves (a favourite chocolate, a colour, an inside-joke tag line) and we'll send photos of the hamper before it's sealed." },
-  { q: "How do payments work?", a: "Cash on delivery across our local zone, UPI (tajgifts@upi) anywhere in India, and bank transfer or GST invoice for corporate orders. Online card payments are coming soon." },
-  { q: "Are the food items fresh & vegetarian?", a: "Mithai and bakes come from licensed local halwais and bakers in small batches tied to order volumes. Every hamper lists its contents and shelf life on the card inside. Eggless options are default; tell us about allergies and we'll adapt." },
-  { q: "Do you do wedding & corporate bulk orders?", a: "Constantly. Return-gift trays from 20 pieces, corporate boxes from 25, with name tags, brand cards and GST invoicing. Code BULK25 gives 8% off above ₹20,000 — lead time is usually 7–10 days." },
-  { q: "What if something arrives damaged?", a: "Photograph it within 24 hours of delivery and WhatsApp us. We replace the item or refund that line — no forms, no arguing. In three years we've had nine such orders; all nine became free re-shipments the same week." },
+  {
+    q: "Where do you deliver, and how will I know the delivery charge?",
+    a: "Enter the recipient pincode at checkout. The checkout shows whether it falls in Taj Gifts' local hand-delivery zone and calculates the final delivery charge. Other serviceable Indian pincodes are sent by courier where available. Delivery timing depends on the hamper, pincode and season, so a preferred date is a request rather than a guarantee.",
+  },
+  {
+    q: "Do I need an account to place an order?",
+    a: "Yes. A Taj Gifts customer account is required for every order. It keeps your delivery details and order history private, and lets you return to your order tracking without relying on a public guest link.",
+  },
+  {
+    q: "How do COD and UPI work?",
+    a: "Cash on delivery is offered only for eligible local hand-delivery orders when it appears at checkout. UPI is available at checkout; a direct UPI transfer remains pending until the studio verifies it. If a secure payment-gateway option is shown on your order page, that payment is verified automatically.",
+  },
+  {
+    q: "Can I customise a hamper completely?",
+    a: "Yes. Message the studio with the occasion, recipient, budget, delivery city and any must-haves. For custom, wedding and bulk requests, we confirm the feasible contents, lead time and delivery plan before production starts.",
+  },
+  {
+    q: "What about food preferences, allergies or dietary needs?",
+    a: "Product pages list the planned contents, but availability can vary for made-to-order work. Tell us about allergies, dietary preferences or ingredient concerns before ordering so the studio can advise whether a suitable option is possible.",
+  },
+  {
+    q: "What if a hamper arrives damaged or incorrect?",
+    a: "Please contact Taj Gifts within 24 hours of delivery with your order code and clear photos of the packaging and affected item. We review verified fulfilment or transit issues and arrange the appropriate replacement, credit or refund for the affected item. See the delivery and returns policy for full details.",
+  },
 ];

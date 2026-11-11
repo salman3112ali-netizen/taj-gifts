@@ -3,9 +3,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { useCart, inr, deliveryFor } from "@/lib/cart";
 import { itemKey, unitPrice } from "@/lib/types";
+import { useUser } from "@/lib/use-user";
 
 export default function AppCart() {
   const { items, setQty, remove, subtotal, coupon, discount, applyCoupon, clearCoupon, settings } = useCart();
+  const { user } = useUser();
   const [code, setCode] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -17,7 +19,7 @@ export default function AppCart() {
   return (
     <div className="px-4 pt-[calc(env(safe-area-inset-top)+12px)]">
       <h1 className="font-display text-[26px] font-medium leading-none">Your basket</h1>
-      <p className="mt-1 text-[12px] font-bold text-ink-soft">{items.length} item{items.length === 1 ? "" : "s"}</p>
+      <p className="mt-1 text-[12px] font-medium text-ink-soft">{items.length} item{items.length === 1 ? "" : "s"}</p>
 
       {items.length === 0 ? (
         <div className="mt-14 flex flex-col items-center gap-4 text-center">
@@ -39,7 +41,7 @@ export default function AppCart() {
                   </Link>
                   <div className="flex-1">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="font-display text-[15px] font-semibold leading-tight">{i.name}</p>
+                      <p className="font-display text-[15px] font-medium leading-tight">{i.name}</p>
                       <button onClick={() => remove(key)} aria-label={`Remove ${i.name}`} className="text-ink-soft">✕</button>
                     </div>
                     <p className="mt-0.5 text-[10px] uppercase tracking-[0.12em] text-ink-soft">
@@ -48,10 +50,10 @@ export default function AppCart() {
                     <div className="mt-2 flex items-center justify-between">
                       <div className="flex items-center gap-2 rounded-full border border-ink/15 bg-white px-1.5 py-0.5">
                         <button onClick={() => setQty(key, i.qty - 1)} className="px-2 py-1 text-base leading-none text-ink-soft" aria-label="Decrease">−</button>
-                        <span className="min-w-4 text-center text-[13px] font-bold">{i.qty}</span>
+                        <span className="min-w-4 text-center text-[13px] font-medium">{i.qty}</span>
                         <button onClick={() => setQty(key, i.qty + 1)} className="px-2 py-1 text-base leading-none text-ink-soft" aria-label="Increase">+</button>
                       </div>
-                      <p className="font-display text-[15px] font-semibold">{inr(unitPrice(i) * i.qty)}</p>
+                      <p className="font-display text-[15px] font-medium">{inr(unitPrice(i) * i.qty)}</p>
                     </div>
                   </div>
                 </li>
@@ -61,8 +63,8 @@ export default function AppCart() {
 
           {coupon ? (
             <div className="mt-4 flex items-center justify-between rounded-2xl bg-mint px-4 py-3 text-[13px]">
-              <span className="font-bold">{coupon.code} — {coupon.label}</span>
-              <button onClick={clearCoupon} className="text-[11px] font-bold uppercase tracking-wider text-rose">Remove</button>
+              <span className="font-medium">{coupon.code} — {coupon.label}</span>
+              <button onClick={clearCoupon} className="text-[11px] font-medium uppercase tracking-wider text-rose">Remove</button>
             </div>
           ) : (
             <form
@@ -76,20 +78,20 @@ export default function AppCart() {
               }}
             >
               <input className="input py-2.5 text-[14px] uppercase" placeholder="Gift code (FIRSTGIFT)" value={code} onChange={(e) => setCode(e.target.value)} />
-              <button className="shrink-0 rounded-xl bg-ink px-4 text-[11px] font-black uppercase tracking-wider text-cream" disabled={busy}>{busy ? "…" : "Apply"}</button>
+              <button className="shrink-0 rounded-xl bg-ink px-4 text-[11px] font-medium uppercase tracking-wider text-cream" disabled={busy}>{busy ? "…" : "Apply"}</button>
             </form>
           )}
-          {err && <p className="mt-2 text-[12px] font-semibold text-rose-deep">{err}</p>}
+          {err && <p className="mt-2 text-[12px] font-medium text-rose-deep">{err}</p>}
 
           <div className="mt-4 space-y-1.5 rounded-[20px] bg-white/70 p-4 text-[13.5px]">
-            <div className="flex justify-between"><span className="text-ink-soft">Subtotal</span><span className="font-bold">{inr(subtotal)}</span></div>
-            {discount > 0 && <div className="flex justify-between text-mint-deep"><span>Discount</span><span className="font-bold">−{inr(discount)}</span></div>}
-            <div className="flex justify-between text-ink-soft"><span>Delivery</span><span className="font-bold text-ink">{free ? "FREE" : `from ${inr(charge)}`}</span></div>
-            <div className="flex justify-between border-t border-line pt-2 font-display text-[17px] font-semibold"><span>Total</span><span>{inr(after + (free ? 0 : charge))}</span></div>
+            <div className="flex justify-between"><span className="text-ink-soft">Subtotal</span><span className="font-medium">{inr(subtotal)}</span></div>
+            {discount > 0 && <div className="flex justify-between text-mint-deep"><span>Discount</span><span className="font-medium">−{inr(discount)}</span></div>}
+            <div className="flex justify-between text-ink-soft"><span>Delivery</span><span className="font-medium text-ink">{free ? "FREE" : `from ${inr(charge)}`}</span></div>
+            <div className="flex justify-between border-t border-line pt-2 font-display text-[17px] font-medium"><span>Total</span><span>{inr(after + (free ? 0 : charge))}</span></div>
           </div>
 
-          <Link href="/app/checkout" className="btn-rose mt-4 w-full py-4 text-[12px]">Checkout · wrap it with love</Link>
-          <p className="mt-2 pb-4 text-center text-[11px] text-ink-soft">COD & UPI · free delivery above {inr(settings.freeDeliveryAbove)}</p>
+          <Link href={user ? "/app/checkout" : "/login?next=/app/checkout"} className="btn-rose mt-4 w-full py-4 text-[12px]">{user ? "Checkout · wrap it with love" : "Sign in to checkout"}</Link>
+          <p className="mt-2 pb-4 text-center text-[11px] text-ink-soft">{user ? `Eligible local COD · UPI at checkout · free delivery above ${inr(settings.freeDeliveryAbove)}` : "A Taj Gifts account is required to place an order."}</p>
         </>
       )}
     </div>

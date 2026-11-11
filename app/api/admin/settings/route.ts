@@ -9,11 +9,17 @@ export async function PATCH(req: NextRequest) {
   const sb = admin();
   const { data } = await sb.from("settings").select("data").eq("id", "shop").maybeSingle();
   const current = (data?.data ?? {}) as Record<string, unknown>;
-  const patch: Record<string, unknown> = { ...current, ...b };
+  const safeBody = { ...b } as Record<string, unknown>;
+  // A raw hash must never be writable through the settings patch: it would
+  // bypass the strength check below and could lock the owner out.
+  delete safeBody.adminPasswordHash;
+  delete safeBody.apis;
+  const patch: Record<string, unknown> = { ...current, ...safeBody };
   delete patch.undefined;
-  if (b.newPassword) {
-    if (String(b.newPassword).length < 8) return NextResponse.json({ ok: false, error: "Password must be 8+ characters" }, { status: 400 });
-    patch.adminPasswordHash = await bcrypt.hash(String(b.newPassword), 10);
+  if (safeBody.newPassword) {
+    const next = String(safeBody.newPassword);
+    if (next.length < 10) return NextResponse.json({ ok: false, error: "Use at least 10 characters for the owner password." }, { status: 400 });
+    patch.adminPasswordHash = await bcrypt.hash(next, 12);
   }
   delete patch.newPassword;
   const { error } = await sb.from("settings").update({ data: patch, updated_at: new Date().toISOString() }).eq("id", "shop");

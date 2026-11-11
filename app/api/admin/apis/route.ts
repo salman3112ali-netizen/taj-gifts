@@ -5,11 +5,13 @@ import { apiCfg, saveApiCfg, savedApiFlags, API_FIELDS, type ApiCfg } from "@/li
 /** Admin-only control center for every external API key / integration setting. */
 export async function GET() {
   if (!(await isAdminRequest())) return NextResponse.json({ ok: false }, { status: 401 });
-  const cfg = await apiCfg(true);
   const fromEnv: Record<string, boolean> = {};
   for (const [k, envName] of Object.entries(API_FIELDS)) fromEnv[k] = !!process.env[envName];
   const saved = await savedApiFlags();
-  return NextResponse.json({ ok: true, values: cfg, fromEnv, saved, fields: Object.keys(API_FIELDS) });
+  // Never send integration secrets back to a browser — not even to an owner
+  // session. Existing values remain usable server-side; a new value replaces an
+  // existing one only when the owner deliberately types it again.
+  return NextResponse.json({ ok: true, values: {}, fromEnv, saved, fields: Object.keys(API_FIELDS) });
 }
 
 export async function PUT(req: NextRequest) {

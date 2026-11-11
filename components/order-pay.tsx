@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-/** Real payment box: UPI deep-link (any UPI app) + Razorpay when keys exist. Zero screenshots. */
+/** Payment surface: manual UPI is labelled honestly; Razorpay is the verified gateway path when configured. */
 export default function OrderPay({ orderId, total, upiId, payeeName, code }: { orderId: string; total: number; upiId: string; payeeName: string; code: string }) {
   const [rzpKey, setRzpKey] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -51,21 +51,21 @@ export default function OrderPay({ orderId, total, upiId, payeeName, code }: { o
 
   return (
     <div className="mt-7 rounded-2xl border border-line bg-white/80 p-5 text-sm">
-      <p className="font-bold">Pay {`₹${total.toLocaleString("en-IN")}`} securely</p>
+      <p className="font-medium">Pay {`₹${total.toLocaleString("en-IN")}`}</p>
       <p className="mt-1 text-[12px] leading-relaxed text-ink-soft">
-        Tap below — your UPI app (GPay / PhonePe / Paytm) opens with the exact amount and our verified UPI ID {upiId} ({payeeName}) pre-filled.
-        Payment is verified automatically. <b>No screenshots, no forwarding — ever.</b>
+        Your UPI app opens with the exact amount and Taj Gifts UPI ID {upiId} ({payeeName}) pre-filled. A direct UPI transfer is checked by the studio before fulfilment.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <a className="btn-rose" href={upiLink}>Pay with any UPI app</a>
         {rzpKey && (
-          <button className="btn-ghost" onClick={payGateway} disabled={busy}>
-            {busy ? "Opening…" : "Cards / netbanking / UPI (Razorpay)"}
+          <button className="btn-rose" onClick={payGateway} disabled={busy}>
+            {busy ? "Opening secure payment…" : "Pay securely by UPI / card"}
           </button>
         )}
+        <a className={rzpKey ? "btn-ghost" : "btn-rose"} href={upiLink}>Open any UPI app</a>
       </div>
-      {msg && <p className="mt-2 text-[12px] font-bold text-mint-deep">{msg}</p>}
-      <p className="mt-2 text-[11px] text-ink-soft">Paying later? Cash on delivery is settled at your door against the delivery OTP.</p>
+      {rzpKey && <p className="mt-2 text-[11px] text-ink-soft">Secure gateway payments are verified automatically. Please do not retry a payment if your bank shows a debit — contact the studio instead.</p>}
+      {msg && <p className="mt-2 text-[12px] font-medium text-mint-deep">{msg}</p>}
+      <p className="mt-2 text-[11px] text-ink-soft">Cash on delivery is settled at the doorstep only for local hand-delivery orders.</p>
     </div>
   );
 }

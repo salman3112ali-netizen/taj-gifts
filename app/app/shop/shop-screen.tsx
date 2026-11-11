@@ -28,7 +28,7 @@ export default function ShopScreen({ products, initialOccasion }: { products: Pr
     <div className="pt-[calc(env(safe-area-inset-top)+12px)]">
       <div className="flex items-end justify-between px-4">
         <h1 className="font-display text-[26px] font-medium leading-none">Shop all</h1>
-        <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} className="rounded-full border border-ink/12 bg-white px-3 py-2 text-[12px] font-bold outline-none" aria-label="Sort">
+        <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} className="rounded-full border border-ink/12 bg-white px-3 py-2 text-[12px] font-medium outline-none" aria-label="Sort">
           {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
         </select>
       </div>

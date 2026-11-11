@@ -10,7 +10,7 @@ import {
   verifyDeliveryOtp,
   writeOrderEvent,
 } from "@/lib/fulfilment";
-import type { Order, OrderItem } from "@/lib/types";
+import type { Order } from "@/lib/types";
 
 /**
  * Private owner order operations.
@@ -31,23 +31,45 @@ export async function PATCH(req: NextRequest) {
   if (!current) return NextResponse.json({ ok: false, error: "Order not found." }, { status: 404 });
   const o = current as Order & { tracking_token_ciphertext?: string | null };
   const now = new Date().toISOString();
+  const savedTrackToken = decryptTrackingToken(o.tracking_token_ciphertext);
+  const secureTrackingUrl = savedTrackToken ? trackingUrl(id, savedTrackToken) : undefined;
+
+  // Cancellation is a stock-affecting state transition. Keep it inside the
+  // database transaction so a double click or two staff sessions can never
+  // return the same inventory twice.
+  if (action === "cancel") {
+    // Cancellation restores stock. A payment that has actually cleared must be
+    // refunded and recorded first; cancelling it silently would make the order
+    // look resolved while the customer is still owed money.
+    if (o.payment_status === "paid") {
+      return NextResponse.json({ ok: false, error: "Record the refund first, then cancel and restock this paid order." }, { status: 400 });
+    }
+    const cancellationNote = String(note || "Cancelled by studio").slice(0, 500);
+    const { data, error } = await sb.rpc("taj_cancel_order", { p_order_id: id, p_note: cancellationNote });
+    if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
+    const result = (Array.isArray(data) ? data[0] : data) as { already_cancelled?: boolean; order_timeline?: Order["timeline"] } | null;
+    if (!result) return NextResponse.json({ ok: false, error: "Could not cancel this order." }, { status: 500 });
+    if (!result.already_cancelled) {
+      await writeOrderEvent(id, "cancel", "Order cancelled", cancellationNote);
+      notifyCustomer({ ...o, status: "cancelled", timeline: result.order_timeline ?? o.timeline }, "cancel", { trackingUrl: secureTrackingUrl }).catch(() => {});
+    }
+    return NextResponse.json({ ok: true, already: !!result.already_cancelled });
+  }
+
   const timeline = [...(o.timeline ?? [])];
   const patch: Record<string, unknown> = {};
   const fulfilment = b.fulfilment && typeof b.fulfilment === "object" ? b.fulfilment as Record<string, unknown> : {};
   const push = (status: string, message: string) => timeline.push({ at: now, status, note: message } as never);
   const setTimeline = () => { if (Object.keys(patch).length || action) patch.timeline = timeline; };
-  const savedTrackToken = decryptTrackingToken(o.tracking_token_ciphertext);
-  const secureTrackingUrl = savedTrackToken ? trackingUrl(id, savedTrackToken) : undefined;
 
-  // Older web UI controls may still send payment-only updates. Permit those but
-  // refuse a status jump that could bypass delivery proof.
+  // Never accept raw status or payment-status writes: approved actions keep the
+  // timeline meaningful and make a paid-order refund explicit.
   if (!action) {
     if (b.status && b.status !== o.status) {
       return NextResponse.json({ ok: false, error: "Use the fulfilment actions; direct status changes are blocked to protect delivery proof." }, { status: 400 });
     }
     if (b.payment_status && b.payment_status !== o.payment_status) {
-      patch.payment_status = b.payment_status;
-      push(o.status, `Payment marked ${String(b.payment_status)} by owner`);
+      return NextResponse.json({ ok: false, error: "Use the payment received or refund action so the order keeps an audit trail." }, { status: 400 });
     }
   } else if (action === "confirm") {
     if (o.status !== "pending") return invalidTransition(o.status, "confirm");
@@ -110,24 +132,22 @@ export async function PATCH(req: NextRequest) {
     await saveFulfilment(id, { ...fulfilment, delivered_at: now, delivery_note: note || null });
   } else if (action === "mark_paid") {
     if (o.payment_status === "paid") return NextResponse.json({ ok: true, already: true });
+    if (o.payment_status === "refunded" || o.status === "cancelled") {
+      return NextResponse.json({ ok: false, error: "A refunded or cancelled order cannot be marked paid." }, { status: 400 });
+    }
     patch.payment_status = "paid";
     push(o.status, "Payment received & verified by owner");
   } else if (action === "mark_refunded") {
     if (o.payment_status === "refunded") return NextResponse.json({ ok: true, already: true });
-    patch.payment_status = "refunded";
-    push(o.status, note || "Refund manually sent by owner");
-  } else if (action === "cancel") {
-    if (o.status === "delivered") return NextResponse.json({ ok: false, error: "A delivered order cannot be cancelled. Record a refund separately if needed." }, { status: 400 });
-    if (o.status === "cancelled") return NextResponse.json({ ok: true, already: true });
-    patch.status = "cancelled";
-    push("cancelled", note || "Cancelled by studio");
-    // Restock exactly once: a cancelled order short-circuits above on every later tap.
-    const { data: its } = await sb.from("order_items").select("product_id,qty").eq("order_id", id);
-    for (const it of (its ?? []) as Pick<OrderItem, "product_id" | "qty">[]) {
-      if (!it.product_id) continue;
-      const { data: p } = await sb.from("products").select("stock").eq("id", it.product_id).maybeSingle();
-      if (p) await sb.from("products").update({ stock: (p.stock ?? 0) + it.qty }).eq("id", it.product_id);
+    if (o.payment_status !== "paid") {
+      return NextResponse.json({ ok: false, error: "Only a verified paid order can be recorded as refunded." }, { status: 400 });
     }
+    const refundNote = String(note || "").trim();
+    if (refundNote.length < 3) {
+      return NextResponse.json({ ok: false, error: "Add the refund reference or a short note before recording it." }, { status: 400 });
+    }
+    patch.payment_status = "refunded";
+    push(o.status, refundNote.slice(0, 500));
   } else {
     return NextResponse.json({ ok: false, error: "Unknown owner action." }, { status: 400 });
   }

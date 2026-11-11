@@ -26,7 +26,8 @@ function LoginForm() {
           ? "Please confirm your email first — tap the link we sent at signup. Lost it? Sign up again with the same email to resend."
           : error.message
       );
-    router.push(params.get("next") || "/");
+    const requested = params.get("next") || "/";
+    router.push(requested.startsWith("/") && !requested.startsWith("//") ? requested : "/");
     router.refresh();
   };
 
@@ -37,11 +38,11 @@ function LoginForm() {
         <label className="label">Password</label>
         <input className="input" type="password" required value={pw} onChange={(e) => setPw(e.target.value)} placeholder="••••••••" />
       </div>
-      {err && <p className="rounded-xl bg-blush px-4 py-3 text-sm font-bold text-rose-deep">{err}</p>}
+      {err && <p className="rounded-xl bg-blush px-4 py-3 text-sm font-medium text-rose-deep">{err}</p>}
       <button className="btn-rose w-full" disabled={busy}>{busy ? "Opening the door…" : "Sign in"}</button>
-      <div className="flex items-center justify-between text-[13px] font-semibold">
+      <div className="flex items-center justify-between text-[13px] font-medium">
         <Link href="/forgot" className="text-ink-soft hover:text-rose">Forgot password?</Link>
-        <Link href="/signup" className="text-rose hover:underline">Create an account →</Link>
+        <Link href={`/signup?next=${encodeURIComponent(params.get("next") || "/account")}`} className="text-rose hover:underline">Create an account →</Link>
       </div>
     </form>
   );
