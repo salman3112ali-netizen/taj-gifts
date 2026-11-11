@@ -16,6 +16,14 @@
     Cache-Control = "public, max-age=604800, immutable"
 
 # Baseline transport, framing and browser-permission headers on every page.
+# Android package: correct MIME type, never cached under a stale name.
+[[headers]]
+  for = "/app/*.apk"
+  [headers.values]
+    Content-Type = "application/vnd.android.package-archive"
+    Content-Disposition = "attachment"
+    Cache-Control = "public, max-age=3600"
+
 [[headers]]
   for = "/*"
   [headers.values]

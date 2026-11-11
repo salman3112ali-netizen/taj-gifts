@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { admin } from "@/lib/supabase";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getUserFromRequest } from "@/lib/supabase/server";
 import { customerVisibleOtp, validTrackingToken } from "@/lib/fulfilment";
 import { customerAppIdentity } from "@/lib/customer-app-auth";
 import { ownsOrClaimsLegacyOrder } from "@/lib/order-access";
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
 
   const rawToken = req.nextUrl.searchParams.get("t");
   // Browser accounts use cookies; native Taj accounts use an app-scoped bearer.
-  const account = customerAppIdentity(req) ?? await getCurrentUser().catch(() => null);
+  const account = customerAppIdentity(req) ?? await getUserFromRequest(req).catch(() => null);
   const tokenOk = validTrackingToken(order.tracking_token_hash as string | null, rawToken);
   const accountOk = await ownsOrClaimsLegacyOrder(order, account);
   if (!tokenOk && !accountOk) {

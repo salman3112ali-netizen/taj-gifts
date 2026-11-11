@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { admin } from "@/lib/supabase";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getUserFromRequest } from "@/lib/supabase/server";
 import { couponDiscount } from "@/lib/store";
 import { workOrderText } from "@/lib/workorder";
 import { notifyOwners, notifyCustomer } from "@/lib/notify";
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     // Never trust a browser hint that it has a customer account. A real Supabase
     // cookie session or our server-issued native-app account token is required.
     const nativeCustomer = customerAppIdentity(req);
-    const sessionUser = nativeCustomer ?? await getCurrentUser();
+    const sessionUser = nativeCustomer ?? await getUserFromRequest(req);
     if (!sessionUser) {
       return clientError("Please sign in or create an account before placing an order.", 401);
     }

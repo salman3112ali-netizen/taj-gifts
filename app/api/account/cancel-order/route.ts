@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { admin } from "@/lib/supabase";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getUserFromRequest } from "@/lib/supabase/server";
 import { customerAppIdentity } from "@/lib/customer-app-auth";
 import { notifyCustomer } from "@/lib/notify";
 import type { Order } from "@/lib/types";
@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(req: NextRequest) {
   try {
-    const identity = customerAppIdentity(req) ?? await getCurrentUser();
+    const identity = customerAppIdentity(req) ?? await getUserFromRequest(req);
     if (!identity) return NextResponse.json({ ok: false, error: "Please sign in to manage this order." }, { status: 401 });
 
     const body = await req.json().catch(() => ({}));

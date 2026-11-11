@@ -4,10 +4,18 @@ import InstallButton from "@/components/app/install";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://tajgifts.netlify.app";
 
+const APK = {
+  version: "1.1.0",
+  build: "2",
+  size: "13.0 MB",
+  file: "/app/tajgifts-1.1.0.apk",
+  sha256: "04909abf8a0df44e1b547a5a22a41108df0fa8c170c3f162d2d1bc986f72ceb4",
+};
+
 export const metadata: Metadata = {
   title: "Taj Gifts on your phone",
   description:
-    "Add the Taj Gifts website to your phone’s home screen to browse hampers, manage your account and follow private order tracking.",
+    "Download the Taj Gifts Android app to browse hampers, manage your account and follow private order tracking. iPhone owners can add the site to the home screen.",
   alternates: { canonical: BASE + "/download" },
   openGraph: { title: "Taj Gifts on your phone", url: BASE + "/download" },
 };
@@ -36,14 +44,26 @@ export default function DownloadPage() {
               Taj Gifts, <span className="italic text-rose">on your phone.</span>
             </h1>
             <p className="mt-5 max-w-md text-[16px] leading-relaxed text-ink-soft">
-              Add the Taj Gifts web app to your home screen for convenient browsing, account access and private order tracking. The Android APK is being refreshed and will be published only after an owner-approved build is supplied and tested.
+              Browse hampers, keep your address book, follow private order tracking and manage your account — in the Taj Gifts Android app, hand-built for this studio.
             </p>
 
             <div className="mt-8 max-w-md space-y-3">
+              <a
+                href={APK.file}
+                download
+                className="btn-primary flex w-full items-center justify-center gap-2"
+              >
+                Download the Android app
+              </a>
+              <p className="text-center text-[12px] text-ink-soft">
+                Version {APK.version} · {APK.size} · Android 7.0+
+              </p>
               <InstallButton />
-              <div className="rounded-2xl border border-ink/12 bg-white/70 px-4 py-3 text-center text-[12px] leading-relaxed text-ink-soft">
-                <span className="font-medium text-ink">Android APK update in progress.</span><br />
-                A download will appear here only after the owner-provided APK has completed device and sign-in testing.
+              <div className="rounded-2xl border border-ink/12 bg-white/70 px-4 py-3 text-[12px] leading-relaxed text-ink-soft">
+                <span className="font-medium text-ink">Before you install:</span> Android may warn that this app
+                comes from outside the Play Store. That is expected for a direct download — tap
+                <b className="text-ink"> More details → Install anyway</b>.
+                Every order still needs a Taj Gifts account, and payment is only confirmed on our server.
               </div>
             </div>
 
@@ -108,6 +128,26 @@ export default function DownloadPage() {
               <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink/70">{f.d}</p>
             </div>
           ))}
+        </div>
+
+        {/* install steps */}
+        <div className="mt-14 grid gap-4 md:grid-cols-3">
+          {[
+            { n: "1", t: "Download the file", d: "Tap the download button above. The APK is about 13 MB." },
+            { n: "2", t: "Allow this one install", d: "Android asks once for permission to install from your browser. After installing you can switch it back off." },
+            { n: "3", t: "Sign in to your account", d: "Use the same email and password as the website — your orders, addresses and wishlist appear in the app." },
+          ].map((step) => (
+            <div key={step.n} className="rounded-[26px] border border-ink/10 bg-white/70 p-6">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-[13px] font-medium text-cream">{step.n}</span>
+              <p className="mt-3 font-display text-lg font-medium">{step.t}</p>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-ink/70">{step.d}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 rounded-[26px] border border-ink/10 bg-white/50 p-5 text-[12px] leading-relaxed text-ink-soft">
+          <span className="font-medium text-ink">Checking the download?</span> SHA-256 of this build is{" "}
+          <code className="break-all font-mono text-[11px]">{APK.sha256}</code>
         </div>
 
         {/* iPhone note */}

@@ -189,3 +189,60 @@ else the customer pays by UPI or Razorpay, and the order is marked paid only
 after a server-side signature + amount + status check. Only the studio can move
 an order forward, and each step writes a timeline event the customer can see
 through their private tracking link.
+
+---
+
+## 6. Owner-supplied Android app (v1.1.0)
+
+The APK supplied by the owner was inspected before publishing it on `/download`.
+
+**Identity of the build**
+
+| Property | Value |
+|---|---|
+| Package | `com.tajgifts.app` |
+| Version | 1.1.0 (versionCode 2) |
+| Min / target SDK | 24 (Android 7.0) / 35 |
+| Signing certificate | Self-signed, `O=Taj Gifts, L=Kashipur, ST=Uttarakhand, C=IN`, valid 9 Nov 2026 → 1 Nov 2056 |
+| Certificate SHA-256 | `8F:AE:0D:80:72:AB:A4:B3:16:5D:83:EF:B8:D1:3A:89:AC:A6:A5:93:A5:39:D6:8F:1C:1F:C1:8D:C1:17:44:C2` |
+| APK SHA-256 | `04909abf8a0df44e1b547a5a22a41108df0fa8c170c3f162d2d1bc986f72ceb4` |
+
+**What was checked**
+
+- Signed with APK Signature Scheme v2/v3 — tamper-evident, installs normally.
+- Permissions requested: `INTERNET`, `ACCESS_NETWORK_STATE`, `VIBRATE` only.
+  No contacts, SMS, location, camera or storage access.
+- Exported components: the launcher activity and a `tajgifts://auth/callback`
+  deep link. Nothing else is exposed.
+- No service-role key, SMTP password or bot token inside the package. The only
+  embedded credential is the Supabase **anon** key, which is public by design
+  and protected by row-level security.
+- Data access: the app reads only `orders`, `order_items`, `addresses`,
+  `profiles`, `wishlist` and `reviews` — all scoped to the signed-in user by
+  RLS. It never touches `settings`, `coupons`, `customers` or `leads`, so the
+  lockdown in `0009` does not affect it.
+- It calls our server for `/api/checkout`, `/api/coupon`, `/api/order/{id}`,
+  `/api/products`, `/api/lead` and `/api/subscribe`.
+
+**One real defect this exposed, now fixed**
+
+The app signs in through Supabase Auth and sends a Supabase access token as
+`Authorization: Bearer <token>`. Our API routes only accepted the browser's
+session cookie, so **every checkout from the app would have been refused** with
+"please sign in" — a genuine block on app orders once guest checkout closed.
+
+`getUserFromRequest()` in `lib/supabase/server.ts` now accepts either the cookie
+or a bearer token, and the token is verified by Supabase on the server
+(`auth.getUser(token)`) — never decoded and trusted locally. Applied to
+checkout, order tracking, account cancellation and legacy-order claiming.
+
+**Also fixed while wiring it up:** `claim-legacy-orders` had regressed to
+`.ilike("customer_email", …)`, where an email containing `_` or `%` acts as a
+SQL wildcard and could pull in another customer's order. It now compares
+case-insensitively in code, exactly.
+
+**Publishing**
+
+The APK is served from `/app/tajgifts-1.1.0.apk` with the correct Android MIME
+type, and the download page shows version, size and SHA-256 so anyone can verify
+what they installed.
