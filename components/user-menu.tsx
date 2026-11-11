@@ -26,7 +26,7 @@ export default function UserMenu() {
     return (
       <Link
         href="/login"
-        className="hidden items-center gap-2 rounded-full border border-ink/15 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-ink/80 transition-all hover:border-rose hover:text-rose sm:inline-flex"
+        className="hidden items-center gap-2 rounded-full border border-ink/15 px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-ink/80 transition-all hover:border-rose hover:text-rose sm:inline-flex"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
           <circle cx="12" cy="8" r="4" />
@@ -41,7 +41,7 @@ export default function UserMenu() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="grid h-9 w-9 place-items-center rounded-full bg-lav font-display text-[15px] font-medium text-ink ring-2 ring-transparent transition hover:ring-rose"
+        className="grid h-9 w-9 place-items-center rounded-full bg-lav font-display text-[15px] font-bold text-ink ring-2 ring-transparent transition hover:ring-rose"
         aria-label="Account menu"
       >
         {initial}
@@ -56,7 +56,7 @@ export default function UserMenu() {
             className="absolute right-0 top-12 w-56 overflow-hidden rounded-2xl border border-line bg-cream shadow-xl"
           >
             <div className="border-b border-line px-4 py-3">
-              <p className="truncate text-sm font-medium">{user.user_metadata?.full_name || "Friend"}</p>
+              <p className="truncate text-sm font-bold">{user.user_metadata?.full_name || "Friend"}</p>
               <p className="truncate text-[12px] text-ink-soft">{user.email}</p>
             </div>
             {[
@@ -64,12 +64,12 @@ export default function UserMenu() {
               { href: "/account?tab=orders", label: "Order history" },
               { href: "/account?tab=addresses", label: "Saved addresses" },
             ].map((l) => (
-              <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="block px-4 py-2.5 text-[13px] font-medium transition hover:bg-blush/50">
+              <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="block px-4 py-2.5 text-[13px] font-semibold transition hover:bg-blush/50">
                 {l.label}
               </Link>
             ))}
             <button
-              className="block w-full px-4 py-2.5 text-left text-[13px] font-medium text-rose-deep transition hover:bg-blush/50"
+              className="block w-full px-4 py-2.5 text-left text-[13px] font-semibold text-rose-deep transition hover:bg-blush/50"
               onClick={async () => {
                 await browserSupabase().auth.signOut();
                 setOpen(false);

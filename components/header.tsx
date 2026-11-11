@@ -31,7 +31,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="relative z-40 bg-ink px-4 py-2 text-center text-[11px] font-medium uppercase leading-relaxed tracking-[0.22em] text-cream/90">
+      <div className="relative z-40 bg-ink px-4 py-2 text-center text-[11px] font-bold uppercase leading-relaxed tracking-[0.22em] text-cream/90">
         {settings.announcement}
       </div>
       <header
@@ -42,7 +42,7 @@ export default function Header() {
       >
         <div className={"wrap flex items-center justify-between transition-all duration-500 " + (scrolled ? "py-3" : "py-5")}>
           <Link href="/" className="group flex items-baseline gap-2" data-cursor>
-            <span className="font-display text-[26px] font-medium leading-none tracking-tight transition-colors duration-300 group-hover:text-rose-deep">
+            <span className="font-display text-[26px] font-semibold leading-none tracking-tight transition-colors duration-300 group-hover:text-rose-deep">
               {settings.shopName.split(" ")[0]}
               <span className="text-rose">.</span>
             </span>
@@ -55,7 +55,7 @@ export default function Header() {
                 key={n.href}
                 href={n.href}
                 className={
-                  "relative text-[12.5px] font-medium uppercase tracking-[0.2em] transition-colors duration-300 hover:text-rose " +
+                  "relative text-[12.5px] font-extrabold uppercase tracking-[0.2em] transition-colors duration-300 hover:text-rose " +
                   (pathname === n.href ? "text-rose" : "text-ink/75")
                 }
               >
@@ -66,28 +66,18 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Link
-              href="/shop#search"
-              aria-label="Search hampers"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/15 text-ink/80 transition-all hover:border-rose/40 hover:bg-blush/60 hover:text-rose"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                <circle cx="11" cy="11" r="7" />
-                <path d="m20 20-3.5-3.5" />
-              </svg>
-            </Link>
             <UserMenu />
             <a
               href={`https://wa.me/${settings.whatsapp}`}
               target="_blank"
               rel="noreferrer"
-              className="hidden rounded-full border border-ink/15 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-ink/80 transition-all hover:border-mint-deep hover:bg-mint hover:text-ink sm:inline-flex"
+              className="hidden rounded-full border border-ink/15 px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-ink/80 transition-all hover:border-mint-deep hover:bg-mint hover:text-ink sm:inline-flex"
             >
               WhatsApp us
             </a>
             <button
               onClick={() => setDrawer(true)}
-              className="relative inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-cream transition-all hover:bg-rose-deep"
+              className="relative inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[11px] font-extrabold uppercase tracking-[0.18em] text-cream transition-all hover:bg-rose-deep"
               aria-label="Open cart"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -95,7 +85,7 @@ export default function Header() {
                 <path d="M9 10V6a3 3 0 0 1 6 0v4" />
               </svg>
               <span className="hidden min-[400px]:inline">Basket</span>
-              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-rose px-1 text-[10px] font-medium text-white">{count}</span>
+              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-rose px-1 text-[10px] font-black text-white">{count}</span>
             </button>
             <button onClick={() => setMenu(true)} className="md:hidden" aria-label="Menu">
               <svg width="26" height="26" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" fill="none">
@@ -116,7 +106,7 @@ export default function Header() {
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="flex items-center justify-between px-5 py-5">
-              <span className="font-display text-2xl font-medium">
+              <span className="font-display text-2xl font-semibold">
                 {settings.shopName}
                 <span className="text-rose">.</span>
               </span>
